@@ -1,0 +1,22 @@
+@C2_api_basic_HostAddress = http://localhost:5072
+
+
+
+### Request with both parameters set (ID = 42, slug = "my-first-post"):
+GET {{C2_api_basic_HostAddress}}/user/42/posts/my-first-post
+
+
+### Request using default value ("No Slug provided") for optional parameter:
+GET {{C2_api_basic_HostAddress}}/user/42/posts/
+
+
+### Bad Request (Status Code 404 Not Found) due to invalid ID parameter:
+GET {{C2_api_basic_HostAddress}}/user/-10/posts/slug-example
+
+
+### Catch-all Route capturing remaining URL segment as String:
+GET {{C2_api_basic_HostAddress}}/files/documents/report.pdf
+
+
+### Route with Query Parameter, allowing flexible input without changing the path
+GET {{C2_api_basic_HostAddress}}/search?query=api+development&page=2

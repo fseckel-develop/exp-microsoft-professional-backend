@@ -1,0 +1,45 @@
+@C2_crud_pattern_HostAddress = http://localhost:5000
+
+
+
+### (C)reate (POST) ##################################
+POST {{C2_crud_pattern_HostAddress}}/blogs/
+Content-Type: application/json
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+######
+
+
+
+
+### (R)ead (GET) #####################################
+GET {{C2_crud_pattern_HostAddress}}/blogs/
+
+### (R)ead a specific blog post by ID
+GET {{C2_crud_pattern_HostAddress}}/blogs/1
+
+######
+
+
+
+
+### (U)pdate (PUT) ###################################
+PUT {{C2_crud_pattern_HostAddress}}/blogs/1
+Content-Type: application/json
+
+{
+  "title": "Updated Blog Post",
+  "content": "This is the updated content of the blog post."
+}
+######
+
+
+
+
+### (D)elete (DELETE) ################################
+DELETE {{C2_crud_pattern_HostAddress}}/blogs/1
+
+######

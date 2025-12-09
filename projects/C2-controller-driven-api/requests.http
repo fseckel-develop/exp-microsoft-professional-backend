@@ -1,0 +1,47 @@
+@C2_controller_driven_api_HostAddress = http://localhost:5020
+
+
+
+### (C)reate (POST) ##################################
+POST {{C2_controller_driven_api_HostAddress}}/controlled/products
+Content-Type: application/json
+
+{
+    "name": "New Product",
+    "description": "A total must-have",
+    "price": 19.99
+}
+######
+
+
+
+
+### (R)ead (GET) #####################################
+GET {{C2_controller_driven_api_HostAddress}}/controlled/products
+
+### (R)ead a specific blog post by ID
+GET {{C2_controller_driven_api_HostAddress}}/controlled/products/1
+
+######
+
+
+
+
+### (U)pdate (PUT) ###################################
+PUT {{C2_controller_driven_api_HostAddress}}/controlled/products/1
+Content-Type: application/json
+
+{
+  "name": "Updated Product",
+  "description": "The price of this product has changed.",
+  "price": 9.99
+}
+######
+
+
+
+
+### (D)elete (DELETE) ################################
+DELETE {{C2_controller_driven_api_HostAddress}}/controlled/products/5
+
+######

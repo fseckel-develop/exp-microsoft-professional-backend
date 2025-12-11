@@ -1,0 +1,34 @@
+### Manual JSON serialization:
+GET http://localhost:5277/manual-json
+Accept: application/json
+######
+
+
+### Custom JSON serialization with options:
+GET http://localhost:5277/custom-json
+Accept: application/json
+######
+
+
+### Automatic JSON serialization (using Results.Json):
+GET http://localhost:5277/automatic-json
+Accept: application/json
+######
+
+
+### Automatic JSON serialization (just returning the object):
+GET http://localhost:5277/simple-json
+Accept: application/json
+######
+
+
+### Manual XML serialization:
+GET http://localhost:5277/manual-xml
+Accept: application/xml
+######
+
+
+### Trigger serialization to files:
+GET http://localhost:5277/store-to-file
+Accept: text/plain
+######

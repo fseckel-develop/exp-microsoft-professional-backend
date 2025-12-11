@@ -1,0 +1,136 @@
+### Manual JSON deserialization:
+POST http://localhost:5211/manual-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": 30
+}
+######
+
+
+### Manual JSON deserialization:
+POST http://localhost:5211/automatic-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": 30
+}
+######
+
+
+### (Bad Request) XML Request to JSON Endpoint:
+POST http://localhost:5211/automatic-json
+Content-Type: application/xml
+
+<Person>
+    <FirstName>John</FirstName>
+    <LastName>Doe</LastName>
+    <Age>30</Age>
+</Person>
+######
+
+
+### (Bad Request) XML as application/json:
+POST http://localhost:5211/automatic-json
+Content-Type: application/json
+
+<Person>
+    <FirstName>John</FirstName>
+    <LastName>Doe</LastName>
+    <Age>30</Age>
+</Person>
+######
+
+
+### (Bad Request) Missing required Property:
+POST http://localhost:5211/manual-json
+Content-Type: application/json
+
+{
+    "LastName": "Doe",
+    "Age": 30
+}
+######
+
+
+### Missing unrequired Property:
+POST http://localhost:5211/manual-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "Age": 30
+}
+######
+
+
+### (Bad Request) Wrong Property Type:
+POST http://localhost:5211/manual-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": "Thirty",
+}
+######
+
+
+### Extra Property (allowed by default):
+POST http://localhost:5211/manual-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": 30,
+    "MiddleName": "M"
+}
+######
+
+
+### (Bad Request) Extra Property (disallowed):
+POST http://localhost:5211/custom-json
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": 30,
+    "MiddleName": "M"
+}
+######
+
+
+### XML deserialization:
+POST http://localhost:5211/xml
+Content-Type: application/xml
+
+<Person>
+    <FirstName>John</FirstName>
+    <LastName>Doe</LastName>
+    <Age>30</Age>
+</Person>
+######
+
+
+### (Bad Request) JSON to XML Endpoint:
+POST http://localhost:5211/xml
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Age": 30
+}
+######
+
+
+### Load Person Data from Files:
+GET http://localhost:5211/load-from-file
+Accept: text/plain
+######

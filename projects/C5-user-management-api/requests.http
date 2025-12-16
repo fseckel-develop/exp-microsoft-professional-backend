@@ -1,0 +1,130 @@
+### Variables
+@host = http://localhost:5291
+@validToken = Bearer my-secret-token
+@invalidToken = Bearer invalid-token
+
+### Create user - valid
+POST {{host}}/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "Alice",
+    "email": "alice@example.com"
+}
+
+### Create user - invalid (empty name)
+POST {{host}}/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "",
+    "email": "bob@example.com"
+}
+
+### Create user - invalid (bad email)
+POST {{host}}/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "Charlie",
+    "email": "invalid-email"
+}
+
+### Create user - unauthorized
+POST {{host}}/users
+Authorization: {{invalidToken}}
+Content-Type: application/json
+
+{
+    "name": "Eve",
+    "email": "eve@example.com"
+}
+
+### Get all users
+GET {{host}}/users
+Authorization: {{validToken}}
+
+### Get all users - unauthorized
+GET {{host}}/users
+Authorization: {{invalidToken}}
+
+### Get user by ID - existing
+GET {{host}}/users/1
+Authorization: {{validToken}}
+
+### Get user by ID - non-existent
+GET {{host}}/users/999
+Authorization: {{validToken}}
+
+### Get user by ID - unauthorized
+GET {{host}}/users/1
+Authorization: {{invalidToken}}
+
+### Update user - valid
+PUT {{host}}/users/1
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "Alice Updated",
+    "email": "alice.updated@example.com"
+}
+
+### Update user - invalid (empty name)
+PUT {{host}}/users/1
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "",
+    "email": "alice.updated@example.com"
+}
+
+### Update user - invalid (bad email)
+PUT {{host}}/users/1
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "Alice Updated",
+    "email": "not-an-email"
+}
+
+### Update user - non-existent
+PUT {{host}}/users/999
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+    "name": "Nobody",
+    "email": "nobody@example.com"
+}
+
+### Update user - unauthorized
+PUT {{host}}/users/1
+Authorization: {{invalidToken}}
+Content-Type: application/json
+
+{
+    "name": "Hacker",
+    "email": "hacker@example.com"
+}
+
+### Delete user - existing
+DELETE {{host}}/users/1
+Authorization: {{validToken}}
+
+### Delete user - non-existent
+DELETE {{host}}/users/999
+Authorization: {{validToken}}
+
+### Delete user - unauthorized
+DELETE {{host}}/users/1
+Authorization: {{invalidToken}}
+
+### Trigger unhandled exception (simulate by sending invalid route data type)
+GET {{host}}/users/abc
+Authorization: {{validToken}}

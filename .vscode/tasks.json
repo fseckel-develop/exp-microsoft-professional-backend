@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build C5",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "projects/C5-user-management-api/C5-user-management-api.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

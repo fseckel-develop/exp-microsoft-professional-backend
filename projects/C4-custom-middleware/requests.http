@@ -1,0 +1,51 @@
+@C4_custom_middleware_HostAddress = http://localhost:5062
+
+
+
+
+###### GET Request to read all blogs
+
+GET {{C4_custom_middleware_HostAddress}}/blogs/
+
+###### GET Request to read one specific blog
+
+GET {{C4_custom_middleware_HostAddress}}/blogs/1
+
+######
+
+
+
+
+###### POST Request without Password => caught by custom middleware
+
+POST {{C4_custom_middleware_HostAddress}}/blogs/
+Content-Type: application/json
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+###### POST Request with correct Password => accepted by custom middleware
+
+POST {{C4_custom_middleware_HostAddress}}/blogs/
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+###### POST Request with wrong Password => accepted by custom middleware
+
+POST {{C4_custom_middleware_HostAddress}}/blogs/
+Content-Type: application/json
+X-Api-Key: thisIsAnotherPassword
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+#######

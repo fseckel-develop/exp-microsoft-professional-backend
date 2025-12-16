@@ -1,0 +1,6 @@
+@C4_secure_design_HostAddress = http://localhost:5114
+
+GET {{C4_secure_design_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

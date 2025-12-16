@@ -1,0 +1,64 @@
+@C4_openapi_swagger_HostAddress = http://localhost:5221
+
+
+
+###### GET Swagger UI
+
+GET {{C4_openapi_swagger_HostAddress}}/Swagger/
+
+###### GET Swagger data as JSON
+
+GET {{C4_openapi_swagger_HostAddress}}/Swagger/v1/swagger.json
+
+######
+
+
+
+
+###### GET Request to read all blogs
+
+GET {{C4_openapi_swagger_HostAddress}}/blogs/
+
+###### GET Request to read one specific blog
+
+GET {{C4_openapi_swagger_HostAddress}}/blogs/1
+
+######
+
+
+
+
+###### POST Request without Password => caught by custom middleware
+
+POST {{C4_openapi_swagger_HostAddress}}/blogs/
+Content-Type: application/json
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+###### POST Request with correct Password => accepted by custom middleware
+
+POST {{C4_openapi_swagger_HostAddress}}/blogs/
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+###### POST Request with wrong Password => accepted by custom middleware
+
+POST {{C4_openapi_swagger_HostAddress}}/blogs/
+Content-Type: application/json
+X-Api-Key: thisIsAnotherPassword
+
+{
+  "title": "Newly Created Blog Post",
+  "content": "This is the content of the newly created blog post."
+}
+
+#######
+

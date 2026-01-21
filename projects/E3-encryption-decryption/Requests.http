@@ -1,0 +1,17 @@
+@E3_encryption_decryption_HostAddress = http://localhost:5097
+
+### Encrypt Data
+POST {{E3_encryption_decryption_HostAddress}}/encrypt
+Content-Type: application/json
+
+{
+  "PlainText": "Hello, World!"
+}
+
+### Decrypt Data
+POST {{E3_encryption_decryption_HostAddress}}/decrypt
+Content-Type: application/json
+
+{
+  "CypherText": "cUXdajAEo/okQwUKw6ZkbA=="
+}

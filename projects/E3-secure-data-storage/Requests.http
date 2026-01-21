@@ -1,0 +1,15 @@
+@E3_secure_data_storage_HostAddress = http://localhost:5138
+
+### Get all messages
+GET {{E3_secure_data_storage_HostAddress}}/messages
+
+### Get message by id
+GET {{E3_secure_data_storage_HostAddress}}/messages/1
+
+### Store a new message
+POST {{E3_secure_data_storage_HostAddress}}/messages
+Content-Type: application/json
+
+{
+  "text": "Hello, secure world!"
+}

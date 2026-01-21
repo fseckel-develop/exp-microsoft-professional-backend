@@ -1,0 +1,20 @@
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h2>Roles</h2>
+
+<form asp-action="Create" method="post">
+    <input name="roleName" placeholder="Role name" />
+    <button type="submit">Create Role</button>
+</form>
+
+<ul>
+@foreach (var role in Model)
+{
+    <li>@role.Name</li>
+}
+</ul>
+
+<a asp-action="Assign">Assign Role to User</a>

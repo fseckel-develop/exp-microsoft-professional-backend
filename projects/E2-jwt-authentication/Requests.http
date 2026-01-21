@@ -1,0 +1,20 @@
+@E2_jwt_authentication_HostAddress = http://localhost:5248
+
+
+### User Login
+POST {{E2_jwt_authentication_HostAddress}}/User/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+
+### Secure Data Access without Token
+GET {{E2_jwt_authentication_HostAddress}}/User/secure-data
+
+
+### Secure Data Access with Token
+GET {{E2_jwt_authentication_HostAddress}}/User/secure-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImp0aSI6ImQzMzhmMmUzLTU1ZmUtNDZiOS1iOWIyLWVmNmE3NDUwOTBhZiIsImV4cCI6MTc2ODU4Nzc1NSwiaXNzIjoiSnd0QXV0aERlbW8iLCJhdWQiOiJKd3RBdXRoRGVtb0F1ZGllbmNlIn0.5aeF_zLLrbAo2wqn17YnF87xjMJFPk9F1KNrYl6zPbA

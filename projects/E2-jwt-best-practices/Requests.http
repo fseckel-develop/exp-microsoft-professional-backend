@@ -1,0 +1,25 @@
+@E2_jwt_best_practices_HostAddress = http://localhost:5253
+
+
+### login as user
+POST {{E2_jwt_best_practices_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password1"
+}
+
+### access secure endpoint with user token
+GET {{E2_jwt_best_practices_HostAddress}}/api/secure
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InVzZXIxIiwibmJmIjoxNzY4ODU5NDYxLCJleHAiOjE3Njg4NTk1ODEsImlhdCI6MTc2ODg1OTQ2MX0.UjO94yXaJqRbJl2cRqukrpIMO-VsKtRfzah3PLGGTgY
+
+### refresh token once expired
+POST {{E2_jwt_best_practices_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password1",
+  "refreshToken" : "03730ac0-ad41-4542-8696-79e5dd0f6528"
+}

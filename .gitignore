@@ -1,0 +1,92 @@
+############################
+# Obsidian (notes/)
+############################
+
+# Obsidian workspace & cache (keep markdown tracked)
+notes/.obsidian/workspace.json
+notes/.obsidian/appearance.json
+notes/.obsidian/core-plugins.json
+notes/.obsidian/cache/
+notes/.obsidian/graph.json
+notes/.obsidian/app.json
+notes/.obsidian/hotkeys.json
+
+# If this is a personal vault and you want zero config tracked, use this instead:
+# notes/.obsidian/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+
+############################
+# .NET (projects/)
+############################
+
+# Build outputs
+projects/**/bin/
+projects/**/obj/
+projects/**/out/
+projects/**/publish/
+projects/**/app.publish/
+
+# Visual Studio
+projects/**/.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# JetBrains Rider
+projects/**/.idea/
+*.sln.iml
+
+# VS Code
+projects/**/.vscode/
+
+# MSBuild
+*.proj.user
+*.csproj.user
+
+# Test results
+projects/**/TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# NuGet
+projects/**/packages/
+*.nupkg
+*.snupkg
+projects/**/.nuget/NuGet.Config
+projects/**/.nuget/NuGet.targets
+projects/**/.nuget/NuGet.props
+
+
+############################
+# Secrets & environment
+############################
+
+projects/**/appsettings.Development.json
+projects/**/appsettings.Local.json
+projects/**/secrets.json
+projects/**/.env
+
+
+############################
+# Logs & temp
+############################
+
+*.log
+*.tmp
+*.temp
+*.swp
+
+
+############################
+# Optional: local databases
+############################
+
+*.mdf
+*.ldf
+*.db

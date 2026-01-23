@@ -1,0 +1,18 @@
+<Project> 
+    <PropertyGroup> 
+
+        <!-- Place bin/ and obj/ in the project root --> 
+        <BaseOutputPath>../bin/</BaseOutputPath> 
+        <BaseIntermediateOutputPath>../obj/</BaseIntermediateOutputPath> 
+        
+        <!-- Optional: consistent .NET version across all projects --> 
+        <TargetFramework>net10.0</TargetFramework> 
+        
+        <!-- Optional: enable nullable reference types everywhere --> 
+        <Nullable>enable</Nullable> 
+        
+        <!-- Optional: treat warnings as errors (good for learning) --> 
+        <!-- <TreatWarningsAsErrors>true</TreatWarningsAsErrors> --> 
+
+    </PropertyGroup>
+</Project>

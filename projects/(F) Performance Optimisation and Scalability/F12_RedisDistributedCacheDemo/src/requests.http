@@ -1,0 +1,18 @@
+@RedisDistributedCacheDemo_HostAddress = http://localhost:5259
+
+
+### Store Data in Redis Cache
+POST {{RedisDistributedCacheDemo_HostAddress}}/store
+Accept: application/json
+
+### Get Data from Redis Cache
+GET {{RedisDistributedCacheDemo_HostAddress}}/retrieve
+Accept: application/json
+
+### Remove Data from Redis Cache
+DELETE {{RedisDistributedCacheDemo_HostAddress}}/remove
+Accept: application/json
+
+### Monitor Redis Cache
+GET {{RedisDistributedCacheDemo_HostAddress}}/monitor
+Accept: application/json

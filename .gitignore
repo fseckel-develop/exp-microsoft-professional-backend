@@ -9,29 +9,29 @@ Thumbs.db
 
 
 ############################
-# .NET (projects/)
+# .NET (practices/)
 ############################
 
 # Build outputs
-projects/**/bin/
-projects/**/obj/
-projects/**/out/
-projects/**/publish/
-projects/**/app.publish/
+practices/**/bin/
+practices/**/obj/
+practices/**/out/
+practices/**/publish/
+practices/**/app.publish/
 
 # Visual Studio
-projects/**/.vs/
+practices/**/.vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
 # JetBrains Rider
-projects/**/.idea/
+practices/**/.idea/
 *.sln.iml
 
 # VS Code
-.vscode
+.vscode/
 
 # MSBuild
 *.proj.user
@@ -42,11 +42,10 @@ projects/**/.idea/
 # Secrets & environment
 ############################
 
-projects/**/appsettings.Development.json
-projects/**/appsettings.Local.json
-projects/**/secrets.json
-projects/**/.env
-
+practices/**/appsettings.Development.json
+practices/**/appsettings.Local.json
+practices/**/secrets.json
+practices/**/.env
 
 ############################
 # Logs & temp

@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "pZoOfbbNKaI=",
+  "success": true,
+  "projectFilePath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
+  "expectedPackageFiles": [
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.abstractions/10.0.2/microsoft.extensions.caching.abstractions.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.memory/10.0.2/microsoft.extensions.caching.memory.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.stackexchangeredis/10.0.2/microsoft.extensions.caching.stackexchangeredis.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.2/microsoft.extensions.dependencyinjection.abstractions.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.2/microsoft.extensions.logging.abstractions.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.options/10.0.2/microsoft.extensions.options.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/microsoft.extensions.primitives/10.0.2/microsoft.extensions.primitives.10.0.2.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "/Users/franz.seckel/.nuget/packages/stackexchange.redis/2.7.27/stackexchange.redis.2.7.27.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,17 @@
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/bin/Debug/net10.0/ExpirationPoliciesDemo
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/bin/Debug/net10.0/ExpirationPoliciesDemo.deps.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/bin/Debug/net10.0/ExpirationPoliciesDemo.runtimeconfig.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/bin/Debug/net10.0/ExpirationPoliciesDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/bin/Debug/net10.0/ExpirationPoliciesDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.csproj.AssemblyReference.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.GeneratedMSBuildEditorConfig.editorconfig
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.AssemblyInfoInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.AssemblyInfo.cs
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.csproj.CoreCompileInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.sourcelink.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/Expirati.C25DEFF8.Up2Date
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/refint/ExpirationPoliciesDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ExpirationPoliciesDemo.genruntimeconfig.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/obj/Debug/net10.0/ref/ExpirationPoliciesDemo.dll

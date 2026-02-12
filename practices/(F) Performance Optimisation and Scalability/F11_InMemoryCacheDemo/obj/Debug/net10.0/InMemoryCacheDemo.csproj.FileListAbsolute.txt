@@ -1,0 +1,17 @@
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.GeneratedMSBuildEditorConfig.editorconfig
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.AssemblyInfoInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.AssemblyInfo.cs
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.csproj.CoreCompileInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.sourcelink.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/bin/Debug/net10.0/InMemoryCacheDemo
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/bin/Debug/net10.0/InMemoryCacheDemo.deps.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/bin/Debug/net10.0/InMemoryCacheDemo.runtimeconfig.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/bin/Debug/net10.0/InMemoryCacheDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/bin/Debug/net10.0/InMemoryCacheDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.csproj.AssemblyReference.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemory.AE6CBDED.Up2Date
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/refint/InMemoryCacheDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/InMemoryCacheDemo.genruntimeconfig.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F11_InMemoryCacheDemo/obj/Debug/net10.0/ref/InMemoryCacheDemo.dll

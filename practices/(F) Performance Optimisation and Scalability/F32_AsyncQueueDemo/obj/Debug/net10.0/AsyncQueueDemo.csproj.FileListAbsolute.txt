@@ -1,0 +1,15 @@
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/bin/Debug/net10.0/AsyncQueueDemo
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/bin/Debug/net10.0/AsyncQueueDemo.deps.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/bin/Debug/net10.0/AsyncQueueDemo.runtimeconfig.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/bin/Debug/net10.0/AsyncQueueDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/bin/Debug/net10.0/AsyncQueueDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.GeneratedMSBuildEditorConfig.editorconfig
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.AssemblyInfoInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.AssemblyInfo.cs
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.csproj.CoreCompileInputs.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.sourcelink.json
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/refint/AsyncQueueDemo.dll
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.pdb
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/AsyncQueueDemo.genruntimeconfig.cache
+/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F32_AsyncQueueDemo/obj/Debug/net10.0/ref/AsyncQueueDemo.dll

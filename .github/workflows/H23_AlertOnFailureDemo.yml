@@ -1,0 +1,65 @@
+name: Alert On Failure Demo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'practices/(H) Deployment and DevOps/H23_AlertOnFailureDemo/src/**'
+  pull_request:
+    paths:
+      - 'practices/(H) Deployment and DevOps/H23_AlertOnFailureDemo/src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: practices/(H) Deployment and DevOps/H23_AlertOnFailureDemo/src
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the application
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal
+
+  notify:
+    needs: build
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "GitHub Actions Pipeline Failed - ${{ github.repository }}"
+          body: |
+            Your GitHub Actions pipeline has failed.
+
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+
+            Event: ${{ github.event_name }}
+
+            View the full run details here:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: GitHub CI

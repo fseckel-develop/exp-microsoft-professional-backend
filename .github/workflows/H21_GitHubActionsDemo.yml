@@ -1,0 +1,36 @@
+name: GitHub Actions Demo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'practices/(H) Deployment and DevOps/H21_GitHubActionsDemo/src/**'
+  pull_request:
+    paths:
+      - 'practices/(H) Deployment and DevOps/H21_GitHubActionsDemo/src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: practices/(H) Deployment and DevOps/H21_GitHubActionsDemo/src
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0'
+  
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the application
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal

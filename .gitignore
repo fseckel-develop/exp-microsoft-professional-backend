@@ -13,6 +13,8 @@ Thumbs.db
 ############################
 
 # Build outputs
+capstone/**/bin/
+capstone/**/obj/
 practices/**/bin/
 practices/**/obj/
 practices/**/out/
@@ -46,6 +48,12 @@ practices/**/appsettings.Development.json
 practices/**/appsettings.Local.json
 practices/**/secrets.json
 practices/**/.env
+capstone/**/appsettings.Development.json
+capstone/**/appsettings.Local.json
+capstone/**/appsettings.json
+capstone/**/secrets.json
+capstone/**/.env
+
 
 ############################
 # Logs & temp
@@ -64,3 +72,5 @@ practices/**/.env
 *.mdf
 *.ldf
 *.db
+*.db-shm
+*.db-wal

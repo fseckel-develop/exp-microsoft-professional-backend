@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+
 using LogiTrack.Api.Entities;
 using LogiTrack.Api.DTOs;
 
 namespace LogiTrack.Api.Controllers;
 
-[ApiController]
+[ApiController][Authorize]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
@@ -14,7 +16,7 @@ public class OrdersController : ControllerBase
     public OrdersController(LogiTrackContext context) => _context = context;
 
     // GET: /api/orders
-    [HttpGet]
+    [HttpGet][Authorize]
     public async Task<ActionResult<IEnumerable<ResponseOrderDto>>> GetAll()
     {
         var orders = await _context.Orders
@@ -43,7 +45,7 @@ public class OrdersController : ControllerBase
     }
 
     // GET: /api/orders/{id}
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}")][Authorize]
     public async Task<ActionResult<ResponseOrderDto>> GetById(int id)
     {
         var order = await _context.Orders
@@ -73,7 +75,7 @@ public class OrdersController : ControllerBase
     }
 
     // POST: /api/orders
-    [HttpPost]
+    [HttpPost][Authorize(Policy = "OrderWrite")]
     public async Task<ActionResult<ResponseOrderDto>> Create(CreateOrderDto dto)
     {
         if (!ModelState.IsValid) 
@@ -102,7 +104,7 @@ public class OrdersController : ControllerBase
     }
 
     // POST: /api/orders/{orderId}/items
-    [HttpPost("{orderId:int}/items")]
+    [HttpPost("{orderId:int}/items")][Authorize(Policy = "OrderWrite")]
     public async Task<ActionResult<ResponseOrderDto>> AddItemToOrder(int orderId, CreateOrderItemDto dto)
     {
         var order = await _context.Orders
@@ -135,7 +137,7 @@ public class OrdersController : ControllerBase
     }
 
     // DELETE: /api/orders/{orderId}/items/{inventoryItemId}
-    [HttpDelete("{id:int}/items/{inventoryItemId:int}")]
+    [HttpDelete("{id:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
     public async Task<ActionResult<ResponseOrderDto>> RemoveItemFromOrder(int id, int inventoryItemId)
     {
         var order = await _context.Orders
@@ -155,7 +157,7 @@ public class OrdersController : ControllerBase
     }
 
     // PATCH: /api/orders/{id}
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:int}")][Authorize(Policy = "OrderWrite")]
     public async Task<ActionResult<ResponseOrderDto>> UpdateOrderInfo(int id, UpdateOrderDto dto)
     {
         var order = await _context.Orders
@@ -173,7 +175,7 @@ public class OrdersController : ControllerBase
     }
 
     // PATCH: /api/orders/{id}/items/{inventoryItemId}
-    [HttpPatch("{id:int}/items/{inventoryItemId:int}")]
+    [HttpPatch("{id:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
     public async Task<ActionResult<ResponseOrderDto>> AdjustItemQuantity(int id, int inventoryItemId, [FromQuery] int quantityChange)
     {
         var order = await _context.Orders
@@ -200,7 +202,7 @@ public class OrdersController : ControllerBase
     }
 
     // DELETE: /api/orders/{id}
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")][Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(int id)
     {
         var order = await _context.Orders.FindAsync(id);

@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+
 using LogiTrack.Api.Entities;
 using LogiTrack.Api.DTOs;
 
 namespace LogiTrack.Api.Controllers;
 
-[ApiController]
+[ApiController][Authorize]
 [Route("api/[controller]")]
 public class InventoryController : ControllerBase
 {
@@ -14,7 +16,7 @@ public class InventoryController : ControllerBase
     public InventoryController(LogiTrackContext context) => _context = context;
 
     // GET: /api/inventory
-    [HttpGet]
+    [HttpGet][Authorize]
     public async Task<ActionResult<IEnumerable<ResponseInventoryItemDto>>> GetAll()
     {
         var items = await _context.InventoryItems
@@ -33,7 +35,7 @@ public class InventoryController : ControllerBase
     }
 
     // GET: /api/inventory/{id}
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}")][Authorize]
     public async Task<ActionResult<ResponseInventoryItemDto>> GetById(int id)
     {
         var item = await _context.InventoryItems
@@ -53,7 +55,7 @@ public class InventoryController : ControllerBase
     }
 
     // POST: /api/inventory
-    [HttpPost]
+    [HttpPost][Authorize(Policy = "InventoryWrite")]
     public async Task<ActionResult<ResponseInventoryItemDto>> Create(CreateInventoryItemDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -82,7 +84,7 @@ public class InventoryController : ControllerBase
     }
 
     // PUT: /api/inventory/{id}
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:int}")][Authorize(Policy = "InventoryWrite")]
     public async Task<ActionResult<ResponseInventoryItemDto>> Update(int id, UpdateInventoryItemDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -108,7 +110,7 @@ public class InventoryController : ControllerBase
     }
 
     // DELETE: /api/inventory/{id}
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")][Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(int id)
     {
         var item = await _context.InventoryItems.FindAsync(id);

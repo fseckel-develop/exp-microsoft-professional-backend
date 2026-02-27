@@ -16,7 +16,10 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDbContext<LogiTrackContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+        );
+
+        builder.Services.AddMemoryCache();
 
         builder.Services
             .AddIdentity<ApplicationUser, IdentityRole>()

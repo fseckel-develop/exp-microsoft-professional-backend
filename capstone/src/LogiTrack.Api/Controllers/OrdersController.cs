@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using System.Linq.Expressions;
 
 using LogiTrack.Api.Entities;
 using LogiTrack.Api.DTOs;
@@ -12,66 +14,81 @@ namespace LogiTrack.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly LogiTrackContext _context;
+    private readonly IMemoryCache _cache;
+    private const string OrdersCacheKey = "orders_all";
 
-    public OrdersController(LogiTrackContext context) => _context = context;
+    private static readonly Expression<Func<Order, ResponseOrderDto>> OrderSelector =
+        order => new ResponseOrderDto
+        {
+            OrderId = order.OrderId,
+            CustomerName = order.CustomerName,
+            DatePlaced = order.DatePlaced,
+            TotalAmount = order.TotalAmount,
+            OrderItems = order.OrderItems.Select(oi => new ResponseOrderItemDto
+            {
+                OrderItemId = oi.OrderItemId,
+                InventoryItemId = oi.InventoryItemId,
+                InventoryItemName = oi.InventoryItem != null ? oi.InventoryItem.Name : string.Empty,
+                QuantityOrdered = oi.QuantityOrdered,
+                UnitPrice = oi.UnitPrice,
+                SubTotal = oi.SubTotal
+            }).ToList()
+        };
+
+
+    public OrdersController(LogiTrackContext context, IMemoryCache cache) 
+    {
+        _context = context;
+        _cache = cache;
+    }
 
     // GET: /api/orders
     [HttpGet][Authorize]
     public async Task<ActionResult<IEnumerable<ResponseOrderDto>>> GetAll()
     {
-        var orders = await _context.Orders
-            .Include(o => o.OrderItems)
-            .ThenInclude(oi => oi.InventoryItem)
-            .AsNoTracking()
-            .Select(o => new ResponseOrderDto
-            {
-                OrderId = o.OrderId,
-                CustomerName = o.CustomerName,
-                DatePlaced = o.DatePlaced,
-                TotalAmount = o.TotalAmount,
-                OrderItems = o.OrderItems.Select(oi => new ResponseOrderItemDto
-                {
-                    OrderItemId = oi.OrderItemId,
-                    InventoryItemId = oi.InventoryItemId,
-                    InventoryItemName = oi.InventoryItem != null ? oi.InventoryItem.Name : string.Empty,
-                    QuantityOrdered = oi.QuantityOrdered,
-                    UnitPrice = oi.UnitPrice,
-                    SubTotal = oi.SubTotal
-                }).ToList()
-            })
-            .ToListAsync();
+        if (!_cache.TryGetValue(OrdersCacheKey, out List<ResponseOrderDto>? orders))
+        {
+            orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.InventoryItem)
+                .AsNoTracking()
+                .Select(OrderSelector)
+                .ToListAsync();
+
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+            _cache.Set(OrdersCacheKey, orders, cacheEntryOptions);
+        }
 
         return Ok(orders);
     }
 
     // GET: /api/orders/{id}
-    [HttpGet("{id:int}")][Authorize]
-    public async Task<ActionResult<ResponseOrderDto>> GetById(int id)
+    [HttpGet("{orderId:int}")][Authorize]
+    public async Task<ActionResult<ResponseOrderDto>> GetById(int orderId)
     {
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .ThenInclude(oi => oi.InventoryItem)
-            .AsNoTracking()
-            .Where(o => o.OrderId == id)
-            .Select(o => new ResponseOrderDto
-            {
-                OrderId = o.OrderId,
-                CustomerName = o.CustomerName,
-                DatePlaced = o.DatePlaced,
-                TotalAmount = o.TotalAmount,
-                OrderItems = o.OrderItems.Select(oi => new ResponseOrderItemDto
-                {
-                    OrderItemId = oi.OrderItemId,
-                    InventoryItemId = oi.InventoryItemId,
-                    InventoryItemName = oi.InventoryItem != null ? oi.InventoryItem.Name : string.Empty,
-                    QuantityOrdered = oi.QuantityOrdered,
-                    UnitPrice = oi.UnitPrice,
-                    SubTotal = oi.SubTotal
-                }).ToList()
-            })
-            .FirstOrDefaultAsync();
+        string cacheKey = $"order_{orderId}";
+        if (!_cache.TryGetValue(cacheKey, out ResponseOrderDto? order))
+        {
+            order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.InventoryItem)
+                .AsNoTracking()
+                .Where(o => o.OrderId == orderId)
+                .Select(OrderSelector)
+                .FirstOrDefaultAsync();
 
-        return order == null ? NotFound() : Ok(order);
+            if (order != null)
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+                _cache.Set(cacheKey, order, cacheEntryOptions);
+            }
+        }
+
+        return order == null ? NotFound($"Order {orderId} not found.") : Ok(order);
     }
 
     // POST: /api/orders
@@ -81,12 +98,16 @@ public class OrdersController : ControllerBase
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
 
+        var inventoryIds = dto.OrderItems.Select(i => i.InventoryItemId).ToList();
+        var inventoryMap = await _context.InventoryItems
+            .Where(i => inventoryIds.Contains(i.ItemId))
+            .ToDictionaryAsync(i => i.ItemId);
+
         var order = new Order { CustomerName = dto.CustomerName };
 
         foreach (var itemDto in dto.OrderItems)
         {
-            var inventory = await _context.InventoryItems.FindAsync(itemDto.InventoryItemId);
-            if (inventory == null)
+            if (!inventoryMap.TryGetValue(itemDto.InventoryItemId, out var inventory)) 
                 return BadRequest($"Inventory item {itemDto.InventoryItemId} does not exist.");
 
             order.AddItem(new OrderItem
@@ -100,7 +121,11 @@ public class OrdersController : ControllerBase
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        return await GetById(order.OrderId);
+        InvalidateCache();
+
+        var responseDto = OrderSelector.Compile().Invoke(order);
+
+        return CreatedAtAction(nameof(GetById), new { orderId = order.OrderId }, responseDto);
     }
 
     // POST: /api/orders/{orderId}/items
@@ -109,6 +134,7 @@ public class OrdersController : ControllerBase
     {
         var order = await _context.Orders
             .Include(o => o.OrderItems)
+            .AsTracking()
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
         if (order == null) 
             return NotFound($"Order {orderId} not found.");
@@ -133,18 +159,22 @@ public class OrdersController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
+
+        InvalidateCache(orderId);
+
         return await GetById(orderId);
     }
 
     // DELETE: /api/orders/{orderId}/items/{inventoryItemId}
-    [HttpDelete("{id:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> RemoveItemFromOrder(int id, int inventoryItemId)
+    [HttpDelete("{orderId:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
+    public async Task<ActionResult<ResponseOrderDto>> RemoveItemFromOrder(int orderId, int inventoryItemId)
     {
         var order = await _context.Orders
             .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.OrderId == id);
+            .AsTracking()
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
         if (order == null) 
-            return NotFound($"Order {id} not found.");
+            return NotFound($"Order {orderId} not found.");
 
         var orderItem = order.OrderItems.FirstOrDefault(i => i.InventoryItemId == inventoryItemId);
         if (orderItem == null) 
@@ -153,37 +183,43 @@ public class OrdersController : ControllerBase
         order.RemoveItem(orderItem.OrderItemId);
         await _context.SaveChangesAsync();
 
-        return await GetById(id);
+        InvalidateCache(orderId);
+
+        return await GetById(orderId);
     }
 
     // PATCH: /api/orders/{id}
-    [HttpPatch("{id:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> UpdateOrderInfo(int id, UpdateOrderDto dto)
+    [HttpPatch("{orderId:int}")][Authorize(Policy = "OrderWrite")]
+    public async Task<ActionResult<ResponseOrderDto>> UpdateOrderInfo(int orderId, UpdateOrderDto dto)
     {
         var order = await _context.Orders
             .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.OrderId == id);
+            .AsTracking()
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
         if (order == null) 
-            return NotFound($"Order {id} not found.");
+            return NotFound($"Order {orderId} not found.");
 
         order.CustomerName = dto.CustomerName;
 
         await _context.SaveChangesAsync();
 
-        return await GetById(id);
+        InvalidateCache(orderId);
+
+        return await GetById(orderId);
     }
 
     // PATCH: /api/orders/{id}/items/{inventoryItemId}
-    [HttpPatch("{id:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> AdjustItemQuantity(int id, int inventoryItemId, [FromQuery] int quantityChange)
+    [HttpPatch("{orderId:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
+    public async Task<ActionResult<ResponseOrderDto>> AdjustItemQuantity(int orderId, int inventoryItemId, [FromQuery] int quantityChange)
     {
         var order = await _context.Orders
             .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.OrderId == id);
+            .AsTracking()
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
         if (order == null) 
-            return NotFound($"Order {id} not found.");
+            return NotFound($"Order {orderId} not found.");
 
         var orderItem = order.OrderItems.FirstOrDefault(i => i.InventoryItemId == inventoryItemId);
         if (orderItem == null) 
@@ -198,18 +234,30 @@ public class OrdersController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return await GetById(id);
+        InvalidateCache(orderId);
+
+        return await GetById(orderId);
     }
 
     // DELETE: /api/orders/{id}
-    [HttpDelete("{id:int}")][Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{orderId:int}")][Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> Delete(int orderId)
     {
-        var order = await _context.Orders.FindAsync(id);
-        if (order == null) return NotFound();
+        var order = await _context.Orders.FindAsync(orderId);
+        if (order == null) 
+            return NotFound($"Order {orderId} not found.");
 
         _context.Orders.Remove(order);
         await _context.SaveChangesAsync();
+
+        InvalidateCache(orderId);
+
         return NoContent();
+    }
+
+    private void InvalidateCache(int? orderId = null)
+    {
+        _cache.Remove(OrdersCacheKey);
+        if (orderId.HasValue) _cache.Remove($"order_{orderId.Value}");
     }
 }

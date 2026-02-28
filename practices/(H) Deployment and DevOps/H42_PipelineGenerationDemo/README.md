@@ -5,7 +5,7 @@ A minimal ASP.NET Core application demonstrating how AI tools such as Microsoft 
 ---
 ## Course Context
 
-**Course**: Deployment and DevOps
+**Course**: Deployment and DevOps  
 **Section**: AI-Assisted CI/CD Pipeline Generation
 
 This project demonstrates how modern AI development tools can accelerate DevOps workflows by generating CI/CD pipeline configurations. Using prompts and contextual instructions, AI can assist developers in producing YAML pipeline files that automate building, testing, and deploying applications. The focus of the project is not only on CI/CD automation itself but also on how AI can support developers in designing, refining, and optimizing pipeline configurations for platforms such as Azure DevOps and GitHub Actions.

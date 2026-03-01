@@ -1,0 +1,222 @@
+@LogiTrack_HostAddress = http://localhost:5112
+
+
+########################################################################
+# Seeded SalesStaff user
+# Email: sales@example.com
+# Password: Sales123!
+########################################################################
+
+# LOGIN as seeded SalesStaff
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "sales@example.com",
+  "password": "Sales123!"
+}
+######
+
+# Paste returned JWT here after login
+@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NDhhOGZlLWEzYWYtNGY5ZS05MDBhLTE4Y2JhZWQ4YTdiNCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InNhbGVzQGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InNhbGVzQGV4YW1wbGUuY29tIiwic2VjdXJpdHlfc3RhbXAiOiJGN0lPVFlPNFlSTFlZWFhUTVRTV0FZSFBTM0lNQUpCTiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlNhbGVzU3RhZmYiLCJleHAiOjE3NzM0MDc4MDAsImlzcyI6IkxvZ2lUcmFja0FwaSIsImF1ZCI6IkxvZ2lUcmFja0NsaWVudCJ9.cgaWHcV7j7d5FeSbh720cNgtL1JDqI-wJ_U8Jpe2Nyg
+
+# Paste refresh cookie value here if needed
+@RefreshToken = 2vgbEIYDKXylil%2B8xNxatbCKGXXoCNwXVAvEbK21DI8%3D
+
+######
+
+
+# LOGIN with invalid password (should fail)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "sales@example.com",
+  "password": "WrongPassword!"
+}
+######
+
+
+# READ all users (should fail - AdminOnly)
+GET {{LogiTrack_HostAddress}}/api/auth/users
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REFRESH TOKEN manually
+POST {{LogiTrack_HostAddress}}/api/auth/refresh-token
+Cookie: refreshToken={{RefreshToken}}
+Accept: application/json
+######
+
+
+# LOGOUT SalesStaff
+POST {{LogiTrack_HostAddress}}/api/auth/logout
+Authorization: Bearer {{AccessToken}}
+Cookie: refreshToken={{RefreshToken}}
+######
+
+
+
+
+########################################################################
+# Inventory endpoints (SalesStaff can read, but cannot write/delete)
+########################################################################
+
+# READ all inventory items
+GET {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# READ inventory item by ID
+GET {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE inventory item (should fail - no InventoryWrite privileges)
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Sales Test Widget",
+  "quantityInStock": 100,
+  "price": 19.99,
+  "location": "Warehouse S1"
+}
+######
+
+
+# UPDATE inventory item (should fail - no InventoryWrite privileges)
+PUT {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Sales Cannot Update",
+  "quantityInStock": 10,
+  "price": 11.99,
+  "location": "Blocked"
+}
+######
+
+
+# DELETE inventory item (should fail - no Admin privileges)
+DELETE {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+
+
+########################################################################
+# Orders endpoints (SalesStaff can create/update order data)
+########################################################################
+
+# READ all orders
+GET {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# READ order by ID
+GET {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE order (should pass - OrderWrite)
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Sales Customer",
+  "orderItems": [
+    {
+      "inventoryItemId": 1,
+      "quantityOrdered": 1
+    },
+    {
+      "inventoryItemId": 2,
+      "quantityOrdered": 1
+    }
+  ]
+}
+######
+
+
+# CREATE order with insufficient stock (should fail)
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Sales Stock Failure",
+  "orderItems": [
+    {
+      "inventoryItemId": 1,
+      "quantityOrdered": 999999
+    }
+  ]
+}
+######
+
+
+# ADD item to existing order
+POST {{LogiTrack_HostAddress}}/api/orders/2/items
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "inventoryItemId": 2,
+  "quantityOrdered": 2
+}
+######
+
+
+# ADJUST quantity upward
+PATCH {{LogiTrack_HostAddress}}/api/orders/2/items/2?quantityChange=1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# ADJUST quantity downward
+PATCH {{LogiTrack_HostAddress}}/api/orders/2/items/2?quantityChange=-1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REMOVE item from order
+DELETE {{LogiTrack_HostAddress}}/api/orders/2/items/2
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# UPDATE order info
+PATCH {{LogiTrack_HostAddress}}/api/orders/2
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Sales Customer Updated"
+}
+######
+
+
+# DELETE order (should fail - AdminOnly)
+DELETE {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######

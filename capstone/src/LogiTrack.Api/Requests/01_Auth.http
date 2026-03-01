@@ -1,0 +1,77 @@
+@LogiTrack_HostAddress = http://localhost:5112
+
+
+########################################################################
+# General Auth Flow for a normal user (no role)
+########################################################################
+
+# REGISTER a new plain user (requires email confirmation before login)
+POST {{LogiTrack_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "plainuser@example.com",
+  "password": "Password123!"
+}
+######
+
+
+# LOGIN before email confirmation (should fail)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "plainuser@example.com",
+  "password": "Password123!"
+}
+######
+
+
+# CONFIRM EMAIL manually
+# Copy the confirmation link printed by FakeEmailSender in the console
+# and paste the userId + token below
+GET {{LogiTrack_HostAddress}}/api/auth/confirm-email?userId=PASTE_USER_ID&token=PASTE_TOKEN
+######
+
+
+# LOGIN after email confirmation (should pass)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "plainuser@example.com",
+  "password": "Password123!"
+}
+
+# Paste the returned JWT manually here after successful login
+@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImYzM2E5ODM1LWRlZWQtNDA0Zi1hOTI4LTYwOGMwNTY3ZGExMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InBsYWludXNlckBleGFtcGxlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJwbGFpbnVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NzM0MTE5ODAsImlzcyI6IkxvZ2lUcmFja0FwaSIsImF1ZCI6IkxvZ2lUcmFja0NsaWVudCJ9.4t2Uk8xbAlnpBX11NPGYQfAw1M8dVN3M9m5tIfFUi_c
+
+# Paste the refreshToken cookie value manually here if needed
+@RefreshToken = 4yh1VyXrr2%2FrFJds3Uz8KO43pcV3PjXdcgjksfnpbRg%3D
+
+######
+
+
+# LOGIN with invalid password (should fail)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "plainuser@example.com",
+  "password": "WrongPassword!"
+}
+######
+
+
+# REFRESH TOKEN manually using copied refresh cookie value
+POST {{LogiTrack_HostAddress}}/api/auth/refresh-token
+Cookie: refreshToken={{RefreshToken}}
+Accept: application/json
+######
+
+
+# LOGOUT authenticated user
+POST {{LogiTrack_HostAddress}}/api/auth/logout
+Authorization: Bearer {{AccessToken}}
+Cookie: refreshToken={{RefreshToken}}
+######

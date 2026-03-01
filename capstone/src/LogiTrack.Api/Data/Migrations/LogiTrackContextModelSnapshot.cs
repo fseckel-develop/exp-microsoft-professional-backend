@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LogiTrack.Api.Data.Migrations
 {
-    [DbContext(typeof(LogiTrackContext))]
+    [DbContext(typeof(LogiTrackDbContext))]
     partial class LogiTrackContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

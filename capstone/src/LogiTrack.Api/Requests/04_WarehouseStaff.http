@@ -1,0 +1,221 @@
+@LogiTrack_HostAddress = http://localhost:5112
+
+
+########################################################################
+# Seeded WarehouseStaff user
+# Email: warehouse@example.com
+# Password: Warehouse123!
+########################################################################
+
+# LOGIN as seeded WarehouseStaff
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "warehouse@example.com",
+  "password": "Warehouse123!"
+}
+######
+
+# Paste returned JWT here after login
+@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjkxOTgzYjkyLWZlZDQtNGNiNS04NzllLTM5MTIzOTc1MjQ3YiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IndhcmVob3VzZUBleGFtcGxlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ3YXJlaG91c2VAZXhhbXBsZS5jb20iLCJzZWN1cml0eV9zdGFtcCI6IkM2NVFEMkZTT1RYTEQ1VUZJMkhQRlVYVk9YWks2UFdRIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiV2FyZWhvdXNlU3RhZmYiLCJleHAiOjE3NzM0MDc5MjIsImlzcyI6IkxvZ2lUcmFja0FwaSIsImF1ZCI6IkxvZ2lUcmFja0NsaWVudCJ9.3HxmRTkdV4zm4fWv--Q0RSBMzZ-oFsQHysDrTRT62fQ
+
+# Paste refresh cookie value here if needed
+@RefreshToken = 6UK5MjVBJHcSde6ShW5yOSyhlhfXw7uYD3yUYrtIUXY%3D
+
+######
+
+
+# LOGIN with invalid password (should fail)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "warehouse@example.com",
+  "password": "WrongPassword!"
+}
+######
+
+
+# READ all users (should fail - AdminOnly)
+GET {{LogiTrack_HostAddress}}/api/auth/users
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REFRESH TOKEN manually
+POST {{LogiTrack_HostAddress}}/api/auth/refresh-token
+Cookie: refreshToken={{RefreshToken}}
+Accept: application/json
+######
+
+
+# LOGOUT WarehouseStaff
+POST {{LogiTrack_HostAddress}}/api/auth/logout
+Authorization: Bearer {{AccessToken}}
+Cookie: refreshToken={{RefreshToken}}
+######
+
+
+
+
+########################################################################
+# Inventory endpoints (WarehouseStaff can create/update inventory)
+########################################################################
+
+# READ all inventory items
+GET {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# READ inventory item by ID
+GET {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE inventory item (should pass)
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Warehouse Widget",
+  "quantityInStock": 200,
+  "price": 15.50,
+  "location": "Warehouse W1"
+}
+######
+
+
+# CREATE invalid inventory item (should fail)
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "quantityInStock": 5,
+  "price": 1.99,
+  "location": "Warehouse W2"
+}
+######
+
+
+# UPDATE existing inventory item (should pass)
+PUT {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Warehouse Widget Updated",
+  "quantityInStock": 250,
+  "price": 17.50,
+  "location": "Warehouse W3"
+}
+######
+
+
+# UPDATE non-existing item (should return 404)
+PUT {{LogiTrack_HostAddress}}/api/inventory/9999
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Ghost Item",
+  "quantityInStock": 1,
+  "price": 1.00,
+  "location": "Nowhere"
+}
+######
+
+
+# DELETE inventory item (should fail - AdminOnly)
+DELETE {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+
+
+########################################################################
+# Orders endpoints (WarehouseStaff can only read, not write)
+########################################################################
+
+# READ all orders
+GET {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# READ order by ID
+GET {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE order (should fail - no OrderWrite privileges)
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Warehouse Customer",
+  "orderItems": [
+    {
+      "inventoryItemId": 1,
+      "quantityOrdered": 1
+    }
+  ]
+}
+######
+
+
+# ADD item to order (should fail - no OrderWrite privileges)
+POST {{LogiTrack_HostAddress}}/api/orders/1/items
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "inventoryItemId": 2,
+  "quantityOrdered": 1
+}
+######
+
+
+# ADJUST quantity (should fail - no OrderWrite privileges)
+PATCH {{LogiTrack_HostAddress}}/api/orders/1/items/2?quantityChange=1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REMOVE item from order (should fail - no OrderWrite privileges)
+DELETE {{LogiTrack_HostAddress}}/api/orders/1/items/2
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# UPDATE order info (should fail - no OrderWrite privileges)
+PATCH {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Warehouse Cannot Edit Orders"
+}
+######
+
+
+# DELETE order (should fail - AdminOnly)
+DELETE {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######

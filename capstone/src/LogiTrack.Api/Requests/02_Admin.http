@@ -1,0 +1,300 @@
+@LogiTrack_HostAddress = http://localhost:5112
+
+
+########################################################################
+# Seeded Admin user
+# Email: admin@example.com
+# Password: Admin123!
+########################################################################
+
+# LOGIN as seeded Admin
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+######
+
+# Paste returned JWT here after login
+@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NjBmNWQ2LTY5YzctNDJlYi1iMjFjLTA5NTliYTFlODJmOCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6ImFkbWluQGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NzM0MTMzMzgsImlzcyI6IkxvZ2lUcmFja0FwaSIsImF1ZCI6IkxvZ2lUcmFja0NsaWVudCJ9.H7DEZ-paDELsNdBjp-h7wWi5IXO0eIxv4YBWQBtLfAk
+
+# Paste refresh cookie value here if needed
+@RefreshToken = t7Y4v7MmE65QgutjunRrWPQlVibKORt6%2Fj9Bz2pm7ew%3D
+
+######
+
+
+# LOGIN with invalid password (should fail)
+POST {{LogiTrack_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "WrongPassword!"
+}
+######
+
+
+# READ all registered users (should pass as Admin)
+GET {{LogiTrack_HostAddress}}/api/auth/users
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REFRESH TOKEN manually
+POST {{LogiTrack_HostAddress}}/api/auth/refresh-token
+Cookie: refreshToken={{RefreshToken}}
+Accept: application/json
+######
+
+
+# LOGOUT Admin
+POST {{LogiTrack_HostAddress}}/api/auth/logout
+Authorization: Bearer {{AccessToken}}
+Cookie: refreshToken={{RefreshToken}}
+######
+
+
+
+
+########################################################################
+# Inventory endpoints (Admin can read/write/delete)
+########################################################################
+
+# READ all inventory items
+GET {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE inventory item A
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Widget A",
+  "quantityInStock": 100,
+  "price": 19.99,
+  "location": "Warehouse A1"
+}
+######
+
+
+# CREATE inventory item B
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Widget B",
+  "quantityInStock": 50,
+  "price": 9.99,
+  "location": "Warehouse B1"
+}
+######
+
+
+# READ inventory item by ID
+GET {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# UPDATE inventory item 1
+PUT {{LogiTrack_HostAddress}}/api/inventory/1
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Widget A Updated",
+  "quantityInStock": 120,
+  "price": 21.99,
+  "location": "Warehouse A2"
+}
+######
+
+
+# UPDATE non-existing inventory item (should return 404)
+PUT {{LogiTrack_HostAddress}}/api/inventory/9999
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "name": "Ghost Item",
+  "quantityInStock": 1,
+  "price": 1.00,
+  "location": "Nowhere"
+}
+######
+
+
+# CREATE invalid inventory item (should return 400)
+POST {{LogiTrack_HostAddress}}/api/inventory
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "quantityInStock": 5,
+  "price": 2.50,
+  "location": "Warehouse C1"
+}
+######
+
+
+# DELETE non-existing inventory item (should return 404)
+DELETE {{LogiTrack_HostAddress}}/api/inventory/9999
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+
+
+########################################################################
+# Orders endpoints (Admin can fully manage orders)
+########################################################################
+
+# READ all orders
+GET {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# CREATE a new order
+# Adjust inventoryItemId values to match actual created inventory items
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Acme Corp",
+  "orderItems": [
+    {
+      "inventoryItemId": 1,
+      "quantityOrdered": 2
+    },
+    {
+      "inventoryItemId": 2,
+      "quantityOrdered": 1
+    }
+  ]
+}
+######
+
+
+# CREATE order with non-existing inventory item (should return 400)
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Invalid Corp",
+  "orderItems": [
+    {
+      "inventoryItemId": 9999,
+      "quantityOrdered": 2
+    }
+  ]
+}
+######
+
+
+# CREATE order with excessive quantity (should fail due to insufficient stock)
+POST {{LogiTrack_HostAddress}}/api/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Stock Test Corp",
+  "orderItems": [
+    {
+      "inventoryItemId": 1,
+      "quantityOrdered": 999999
+    }
+  ]
+}
+######
+
+
+# READ order by ID
+GET {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# ADD item to existing order
+POST {{LogiTrack_HostAddress}}/api/orders/1/items
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "inventoryItemId": 2,
+  "quantityOrdered": 3
+}
+######
+
+
+# ADD item to non-existing order (should fail)
+POST {{LogiTrack_HostAddress}}/api/orders/999/items
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "inventoryItemId": 2,
+  "quantityOrdered": 1
+}
+######
+
+
+# INCREASE item quantity
+PATCH {{LogiTrack_HostAddress}}/api/orders/1/items/2?quantityChange=2
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# DECREASE item quantity
+PATCH {{LogiTrack_HostAddress}}/api/orders/1/items/2?quantityChange=-1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# REMOVE item from order
+DELETE {{LogiTrack_HostAddress}}/api/orders/1/items/2
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# UPDATE order info
+PATCH {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerName": "Acme Corporation Ltd."
+}
+######
+
+
+# DELETE order (Admin only)
+DELETE {{LogiTrack_HostAddress}}/api/orders/1
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######
+
+
+# DELETE non-existing order (should return 404)
+DELETE {{LogiTrack_HostAddress}}/api/orders/9999
+Authorization: Bearer {{AccessToken}}
+Accept: application/json
+######

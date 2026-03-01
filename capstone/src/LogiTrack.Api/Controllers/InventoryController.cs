@@ -1,166 +1,127 @@
-using Microsoft.AspNetCore.Mvc;
+using LogiTrack.Api.Contracts.Inventory;
+using LogiTrack.Api.Services.Inventory;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Linq.Expressions;
-
-using LogiTrack.Api.Entities;
-using LogiTrack.Api.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LogiTrack.Api.Controllers;
 
-[ApiController][Authorize]
+[ApiController]
+[Authorize]
 [Route("api/[controller]")]
+[Produces("application/json")]
+[Tags("Inventory")]
 public class InventoryController : ControllerBase
 {
-    private readonly LogiTrackContext _context;
-    private readonly IMemoryCache _cache;
-    private const string InventoryCacheKey = "inventory_all";
+    private readonly IInventoryService _inventoryService;
 
-    private static readonly Expression<Func<InventoryItem, ResponseInventoryItemDto>> InventorySelector =
-        item => new ResponseInventoryItemDto
-        {
-            InventoryItemId = item.ItemId,
-            Name = item.Name,
-            QuantityInStock = item.QuantityInStock,
-            Location = item.Location,
-            Price = item.Price
-        };
-
-    public InventoryController(LogiTrackContext context, IMemoryCache cache) 
+    public InventoryController(IInventoryService inventoryService)
     {
-        _context = context;
-        _cache = cache;
+        _inventoryService = inventoryService;
     }
 
-    // GET: /api/inventory
-    [HttpGet][Authorize]
-    public async Task<ActionResult<IEnumerable<ResponseInventoryItemDto>>> GetAll()
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Get all inventory items",
+        Description = "Returns the complete list of inventory items."
+    )]
+    [ProducesResponseType(typeof(IEnumerable<InventoryItemResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<IEnumerable<InventoryItemResponseDto>>> GetAll()
     {
-        if (!_cache.TryGetValue(InventoryCacheKey, out List<ResponseInventoryItemDto>? items))
-        {
-            items = await _context.InventoryItems
-                .AsNoTracking()
-                .Select(InventorySelector)
-                .ToListAsync();
-
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-            
-            _cache.Set(InventoryCacheKey, items, cacheEntryOptions);
-        }
-
+        var items = await _inventoryService.GetAllAsync();
         return Ok(items);
     }
 
-    // GET: /api/inventory/{id}
-    [HttpGet("{itemId:int}")][Authorize]
-    public async Task<ActionResult<ResponseInventoryItemDto>> GetById(int itemId)
+    [HttpGet("{itemId:int}")]
+    [SwaggerOperation(
+        Summary = "Get inventory item by ID",
+        Description = "Returns a single inventory item by its unique identifier."
+    )]
+    [ProducesResponseType(typeof(InventoryItemResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<InventoryItemResponseDto>> GetById(int itemId)
     {
-        string cacheKey = $"inventory_{itemId}";
-        if (!_cache.TryGetValue(cacheKey, out ResponseInventoryItemDto? item))
-        {
-            item = await _context.InventoryItems
-                .AsNoTracking()
-                .Where(i => i.ItemId == itemId)
-                .Select(InventorySelector)
-                .FirstOrDefaultAsync();
-
-            if (item != null)
-            {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                _cache.Set(cacheKey, item, cacheEntryOptions);
-            }
-        }
-
-        return item == null ? NotFound($"Inventory item {itemId} not found.") : Ok(item);
-    }
-
-    // POST: /api/inventory
-    [HttpPost][Authorize(Policy = "InventoryWrite")]
-    public async Task<ActionResult<ResponseInventoryItemDto>> Create(CreateInventoryItemDto dto)
-    {
-        if (!ModelState.IsValid) 
-            return BadRequest(ModelState);
-
-        var item = new InventoryItem
-        {
-            Name = dto.Name,
-            QuantityInStock = dto.QuantityInStock,
-            Location = dto.Location,
-            Price = dto.Price
-        };
-
-        _context.InventoryItems.Add(item);
-        await _context.SaveChangesAsync();
-
-        InvalidateCache();
-
-        var responseDto = new ResponseInventoryItemDto
-        {
-            InventoryItemId = item.ItemId,
-            Name = item.Name,
-            QuantityInStock = item.QuantityInStock,
-            Location = item.Location,
-            Price = item.Price
-        };
-
-        return CreatedAtAction(nameof(GetById), new { itemId = item.ItemId }, responseDto);
-    }
-
-    // PUT: /api/inventory/{id}
-    [HttpPut("{itemId:int}")][Authorize(Policy = "InventoryWrite")]
-    public async Task<ActionResult<ResponseInventoryItemDto>> Update(int itemId, UpdateInventoryItemDto dto)
-    {
-        if (!ModelState.IsValid) 
-            return BadRequest(ModelState);
-
-        var existing = await _context.InventoryItems.FindAsync(itemId);
-        if (existing == null) 
+        var item = await _inventoryService.GetByIdAsync(itemId);
+        if (item is null)
             return NotFound($"Inventory item {itemId} not found.");
 
-        existing.Name = dto.Name;
-        existing.QuantityInStock = dto.QuantityInStock;
-        existing.Price = dto.Price;
-        existing.Location = dto.Location;
-
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(itemId);
-
-        var responseDto = new ResponseInventoryItemDto
-        {
-            InventoryItemId = existing.ItemId,
-            Name = existing.Name,
-            QuantityInStock = existing.QuantityInStock,
-            Location = existing.Location,
-            Price = existing.Price
-        };
-
-        return Ok(responseDto);
+        return Ok(item);
     }
 
-    // DELETE: /api/inventory/{id}
-    [HttpDelete("{itemId:int}")][Authorize(Policy = "AdminOnly")]
+    [HttpPost]
+    [Authorize(Policy = "InventoryWrite")]
+    [SwaggerOperation(
+        Summary = "Create a new inventory item",
+        Description = "Creates a new inventory item. Allowed for Admin and WarehouseStaff users."
+    )]
+    [ProducesResponseType(typeof(InventoryItemResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<InventoryItemResponseDto>> Create(CreateInventoryItemDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var created = await _inventoryService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { itemId = created.InventoryItemId }, created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{itemId:int}")]
+    [Authorize(Policy = "InventoryWrite")]
+    [SwaggerOperation(
+        Summary = "Update an inventory item",
+        Description = "Updates an existing inventory item by ID. Allowed for Admin and WarehouseStaff users."
+    )]
+    [ProducesResponseType(typeof(InventoryItemResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<InventoryItemResponseDto>> Update(int itemId, UpdateInventoryItemDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var updated = await _inventoryService.UpdateAsync(itemId, dto);
+            if (updated is null)
+                return NotFound($"Inventory item {itemId} not found.");
+
+            return Ok(updated);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{itemId:int}")]
+    [Authorize(Policy = "AdminOnly")]
+    [SwaggerOperation(
+        Summary = "Delete an inventory item",
+        Description = "Deletes an inventory item by ID. This endpoint is restricted to Admin users."
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int itemId)
     {
-        var item = await _context.InventoryItems.FindAsync(itemId);
-        if (item == null) 
+        var deleted = await _inventoryService.DeleteAsync(itemId);
+        if (!deleted)
             return NotFound($"Inventory item {itemId} not found.");
 
-        _context.InventoryItems.Remove(item);
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(itemId);
-
         return NoContent();
-    }
-
-    private void InvalidateCache(int? itemId = null)
-    {
-        _cache.Remove(InventoryCacheKey);
-        if (itemId.HasValue) _cache.Remove($"inventory_{itemId.Value}");
     }
 }

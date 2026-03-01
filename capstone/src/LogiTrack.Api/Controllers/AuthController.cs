@@ -1,42 +1,52 @@
-using Microsoft.AspNetCore.Mvc;
+using LogiTrack.Api.Contracts.Auth;
+using LogiTrack.Api.Models;
+using LogiTrack.Api.Services.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
-using System.Security.Cryptography;
-
-using LogiTrack.Api.Entities;
-using LogiTrack.Api.DTOs;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LogiTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
+[Tags("Authentication")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IEmailSender _emailSender;
-    private readonly IConfiguration _configuration;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IWebHostEnvironment _environment;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender,
-        IConfiguration configuration)
+        IJwtTokenService jwtTokenService,
+        IRefreshTokenService refreshTokenService,
+        IWebHostEnvironment environment)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _emailSender = emailSender;
-        _configuration = configuration;
+        _jwtTokenService = jwtTokenService;
+        _refreshTokenService = refreshTokenService;
+        _environment = environment;
     }
 
-    // POST: /api/auth/register
     [HttpPost("register")]
+    [SwaggerOperation(
+        Summary = "Register a new user",
+        Description = "Creates a new user account and sends an email confirmation link. Newly registered users are not assigned a role automatically."
+    )]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterDto dto)
     {
         var user = new ApplicationUser
@@ -46,87 +56,92 @@ public class AuthController : ControllerBase
         };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
-        if (!result.Succeeded) 
+
+        if (!result.Succeeded)
             return BadRequest(result.Errors);
 
-        // Assign role based on email (for testing)
-        switch (dto.Email)
-        {
-            case "admin@example.com":
-                await _userManager.AddToRoleAsync(user, "Admin");
-                break;
-            case "warehouse@example.com":
-                await _userManager.AddToRoleAsync(user, "WarehouseStaff");
-                break;
-            case "sales@example.com":
-                await _userManager.AddToRoleAsync(user, "SalesStaff");
-                break;
-            default:
-                // No role assigned for other emails
-                break;
-        }
-
-        // Generate email confirmation token
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
         var confirmationLink = Url.Action(
             nameof(ConfirmEmail),
             "Auth",
             new { userId = user.Id, token },
             Request.Scheme);
 
-        // Send email via your email service
-        await _emailSender.SendEmailAsync(user.Email, "Confirm your email", 
+        await _emailSender.SendEmailAsync(
+            user.Email!,
+            "Confirm your email",
             $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
 
-        return Ok("User registered successfully. Please check your email (or consol) to confirm.");
+        return Ok("User registered successfully. Please check your email to confirm your account.");
     }
 
-    // POST: /api/auth/login
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto dto)
+    [SwaggerOperation(
+        Summary = "Log in a user",
+        Description = "Authenticates a confirmed user, returns a JWT access token, and issues a refresh token cookie."
+    )]
+    [ProducesResponseType(typeof(AuthTokenResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthTokenResponseDto>> Login(LoginDto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null) 
+
+        if (user is null)
             return Unauthorized("Invalid credentials.");
-        
+
         if (!user.EmailConfirmed)
             return Unauthorized("Email not confirmed.");
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
-        if (!result.Succeeded) 
+        var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
+
+        if (!result.Succeeded)
             return Unauthorized("Invalid credentials.");
 
-        var jwtToken = GenerateJwtToken(user);
+        var jwtToken = await _jwtTokenService.GenerateTokenAsync(user);
+        var refreshToken = _refreshTokenService.GenerateRefreshToken();
 
-        var refreshToken = GenerateRefreshToken();
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
         await _userManager.UpdateAsync(user);
 
         Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = !_environment.IsDevelopment(),
             SameSite = SameSiteMode.Strict,
             Expires = user.RefreshTokenExpiryTime
         });
 
-        return Ok(new { token = jwtToken });
+        return Ok(new AuthTokenResponseDto
+        {
+            Token = jwtToken
+        });
     }
 
     [HttpPost("logout")]
+    [Authorize]
+    [SwaggerOperation(
+        Summary = "Log out the current user",
+        Description = "Clears the stored refresh token, updates the user's security stamp, and deletes the refresh token cookie."
+    )]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Logout()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null) 
+
+        if (userId is null)
             return Unauthorized();
 
         var user = await _userManager.FindByIdAsync(userId);
-        if (user != null)
+        if (user is not null)
         {
             user.RefreshToken = null;
             user.RefreshTokenExpiryTime = null;
             await _userManager.UpdateAsync(user);
+            await _userManager.UpdateSecurityStampAsync(user);
         }
 
         Response.Cookies.Delete("refreshToken");
@@ -135,21 +150,35 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("confirm-email")]
+    [SwaggerOperation(
+        Summary = "Confirm a user's email address",
+        Description = "Confirms a user's email using the userId and token generated during registration."
+    )]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ConfirmEmail(string userId, string token)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) 
+
+        if (user is null)
             return BadRequest("Invalid user ID.");
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
-        if (result.Succeeded) 
-            return Ok("Email confirmed successfully.");
-        
-        return BadRequest("Email confirmation failed.");
+
+        if (!result.Succeeded)
+            return BadRequest("Email confirmation failed.");
+
+        return Ok("Email confirmed successfully.");
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
+    [SwaggerOperation(
+        Summary = "Refresh the access token",
+        Description = "Uses the refresh token cookie to issue a new JWT access token and rotate the refresh token."
+    )]
+    [ProducesResponseType(typeof(AuthTokenResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthTokenResponseDto>> RefreshToken()
     {
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             return Unauthorized("No refresh token provided.");
@@ -157,34 +186,44 @@ public class AuthController : ControllerBase
         var user = await _userManager.Users
             .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
-        if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (user is null || user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             return Unauthorized("Invalid or expired refresh token.");
 
-        var newJwtToken = await GenerateJwtToken(user);
-        var newRefreshToken = GenerateRefreshToken();
+        var newJwtToken = await _jwtTokenService.GenerateTokenAsync(user);
+        var newRefreshToken = _refreshTokenService.GenerateRefreshToken();
 
         user.RefreshToken = newRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
         await _userManager.UpdateAsync(user);
 
-        // Update cookie
         Response.Cookies.Append("refreshToken", newRefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false, // false for local development; should be true in production
+            Secure = !_environment.IsDevelopment(),
             SameSite = SameSiteMode.Strict,
             Expires = user.RefreshTokenExpiryTime
         });
 
-        return Ok(new { token = newJwtToken });
+        return Ok(new AuthTokenResponseDto
+        {
+            Token = newJwtToken
+        });
     }
 
     [HttpGet("users")]
     [Authorize(Policy = "AdminOnly")]
+    [SwaggerOperation(
+        Summary = "Get all users",
+        Description = "Returns all registered users. This endpoint is restricted to Admin users."
+    )]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userManager.Users
-            .Select(u => new 
+            .Select(u => new
             {
                 u.Id,
                 u.UserName,
@@ -195,46 +234,5 @@ public class AuthController : ControllerBase
             .ToListAsync();
 
         return Ok(users);
-    }
-
-    private async Task<string> GenerateJwtToken(ApplicationUser user)
-    {
-        var jwtKey = _configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("JWT Key is not configured.");
-
-        var roles = await _userManager.GetRolesAsync(user);
-
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Name, user.UserName!)
-        };
-
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 }

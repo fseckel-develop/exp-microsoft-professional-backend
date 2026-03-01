@@ -1,263 +1,205 @@
-using Microsoft.AspNetCore.Mvc;
+using LogiTrack.Api.Contracts.Orders;
+using LogiTrack.Api.Services.Orders;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Linq.Expressions;
-
-using LogiTrack.Api.Entities;
-using LogiTrack.Api.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LogiTrack.Api.Controllers;
 
-[ApiController][Authorize]
+[ApiController]
+[Authorize]
 [Route("api/[controller]")]
+[Produces("application/json")]
+[Tags("Orders")]
 public class OrdersController : ControllerBase
 {
-    private readonly LogiTrackContext _context;
-    private readonly IMemoryCache _cache;
-    private const string OrdersCacheKey = "orders_all";
+    private readonly IOrderService _orderService;
 
-    private static readonly Expression<Func<Order, ResponseOrderDto>> OrderSelector =
-        order => new ResponseOrderDto
-        {
-            OrderId = order.OrderId,
-            CustomerName = order.CustomerName,
-            DatePlaced = order.DatePlaced,
-            TotalAmount = order.TotalAmount,
-            OrderItems = order.OrderItems.Select(oi => new ResponseOrderItemDto
-            {
-                OrderItemId = oi.OrderItemId,
-                InventoryItemId = oi.InventoryItemId,
-                InventoryItemName = oi.InventoryItem != null ? oi.InventoryItem.Name : string.Empty,
-                QuantityOrdered = oi.QuantityOrdered,
-                UnitPrice = oi.UnitPrice,
-                SubTotal = oi.SubTotal
-            }).ToList()
-        };
-
-
-    public OrdersController(LogiTrackContext context, IMemoryCache cache) 
+    public OrdersController(IOrderService orderService)
     {
-        _context = context;
-        _cache = cache;
+        _orderService = orderService;
     }
 
-    // GET: /api/orders
-    [HttpGet][Authorize]
-    public async Task<ActionResult<IEnumerable<ResponseOrderDto>>> GetAll()
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Get all orders",
+        Description = "Returns the complete list of orders."
+    )]
+    [ProducesResponseType(typeof(IEnumerable<OrderResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetAll()
     {
-        if (!_cache.TryGetValue(OrdersCacheKey, out List<ResponseOrderDto>? orders))
-        {
-            orders = await _context.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.InventoryItem)
-                .AsNoTracking()
-                .Select(OrderSelector)
-                .ToListAsync();
-
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-            _cache.Set(OrdersCacheKey, orders, cacheEntryOptions);
-        }
-
+        var orders = await _orderService.GetAllAsync();
         return Ok(orders);
     }
 
-    // GET: /api/orders/{id}
-    [HttpGet("{orderId:int}")][Authorize]
-    public async Task<ActionResult<ResponseOrderDto>> GetById(int orderId)
+    [HttpGet("{orderId:int}")]
+    [SwaggerOperation(
+        Summary = "Get order by ID",
+        Description = "Returns a single order by its unique identifier."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<OrderResponseDto>> GetById(int orderId)
     {
-        string cacheKey = $"order_{orderId}";
-        if (!_cache.TryGetValue(cacheKey, out ResponseOrderDto? order))
-        {
-            order = await _context.Orders
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.InventoryItem)
-                .AsNoTracking()
-                .Where(o => o.OrderId == orderId)
-                .Select(OrderSelector)
-                .FirstOrDefaultAsync();
+        var order = await _orderService.GetByIdAsync(orderId);
 
-            if (order != null)
-            {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+        if (order is null)
+            return NotFound($"Order {orderId} not found.");
 
-                _cache.Set(cacheKey, order, cacheEntryOptions);
-            }
-        }
-
-        return order == null ? NotFound($"Order {orderId} not found.") : Ok(order);
+        return Ok(order);
     }
 
-    // POST: /api/orders
-    [HttpPost][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> Create(CreateOrderDto dto)
+    [HttpPost]
+    [Authorize(Policy = "OrderWrite")]
+    [SwaggerOperation(
+        Summary = "Create a new order",
+        Description = "Creates a new order and deducts the ordered quantities from inventory. Allowed for Admin and SalesStaff users."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<OrderResponseDto>> Create(CreateOrderDto dto)
     {
-        if (!ModelState.IsValid) 
+        if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var inventoryIds = dto.OrderItems.Select(i => i.InventoryItemId).ToList();
-        var inventoryMap = await _context.InventoryItems
-            .Where(i => inventoryIds.Contains(i.ItemId))
-            .ToDictionaryAsync(i => i.ItemId);
+        var result = await _orderService.CreateAsync(dto);
 
-        var order = new Order { CustomerName = dto.CustomerName };
+        if (!result.Success)
+            return MapFailure(result);
 
-        foreach (var itemDto in dto.OrderItems)
-        {
-            if (!inventoryMap.TryGetValue(itemDto.InventoryItemId, out var inventory)) 
-                return BadRequest($"Inventory item {itemDto.InventoryItemId} does not exist.");
-
-            order.AddItem(new OrderItem
-            {
-                InventoryItemId = itemDto.InventoryItemId,
-                QuantityOrdered = itemDto.QuantityOrdered,
-                UnitPrice = inventory.Price
-            });
-        }
-
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-
-        InvalidateCache();
-
-        var responseDto = OrderSelector.Compile().Invoke(order);
-
-        return CreatedAtAction(nameof(GetById), new { orderId = order.OrderId }, responseDto);
+        return CreatedAtAction(
+            nameof(GetById),
+            new { orderId = result.Order!.OrderId },
+            result.Order);
     }
 
-    // POST: /api/orders/{orderId}/items
-    [HttpPost("{orderId:int}/items")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> AddItemToOrder(int orderId, CreateOrderItemDto dto)
+    [HttpPost("{orderId:int}/items")]
+    [Authorize(Policy = "OrderWrite")]
+    [SwaggerOperation(
+        Summary = "Add an item to an order",
+        Description = "Adds a new inventory item to an existing order or increases quantity if the item already exists in the order."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<OrderResponseDto>> AddItemToOrder(int orderId, CreateOrderItemDto dto)
     {
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .AsTracking()
-            .FirstOrDefaultAsync(o => o.OrderId == orderId);
-        if (order == null) 
-            return NotFound($"Order {orderId} not found.");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        var inventory = await _context.InventoryItems.FindAsync(dto.InventoryItemId);
-        if (inventory == null) 
-            return BadRequest($"InventoryItem {dto.InventoryItemId} does not exist.");
+        var result = await _orderService.AddItemAsync(orderId, dto);
 
-        var existingItem = order.OrderItems.FirstOrDefault(i => i.InventoryItemId == dto.InventoryItemId);
-        if (existingItem != null)
-        {
-            existingItem.QuantityOrdered += dto.QuantityOrdered;
-        }
-        else
-        {
-            order.AddItem(new OrderItem
-            {
-                InventoryItemId = dto.InventoryItemId,
-                QuantityOrdered = dto.QuantityOrdered,
-                UnitPrice = inventory.Price
-            });
-        }
+        if (!result.Success)
+            return MapFailure(result);
 
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(orderId);
-
-        return await GetById(orderId);
+        return Ok(result.Order);
     }
 
-    // DELETE: /api/orders/{orderId}/items/{inventoryItemId}
-    [HttpDelete("{orderId:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> RemoveItemFromOrder(int orderId, int inventoryItemId)
+    [HttpDelete("{orderId:int}/items/{inventoryItemId:int}")]
+    [Authorize(Policy = "OrderWrite")]
+    [SwaggerOperation(
+        Summary = "Remove an item from an order",
+        Description = "Removes an inventory item from an order and restores its quantity to stock."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<OrderResponseDto>> RemoveItemFromOrder(int orderId, int inventoryItemId)
     {
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .AsTracking()
-            .FirstOrDefaultAsync(o => o.OrderId == orderId);
-        if (order == null) 
-            return NotFound($"Order {orderId} not found.");
+        var result = await _orderService.RemoveItemAsync(orderId, inventoryItemId);
 
-        var orderItem = order.OrderItems.FirstOrDefault(i => i.InventoryItemId == inventoryItemId);
-        if (orderItem == null) 
-            return NotFound($"OrderItem with InventoryItem {inventoryItemId} not found.");
+        if (!result.Success)
+            return MapFailure(result);
 
-        order.RemoveItem(orderItem.OrderItemId);
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(orderId);
-
-        return await GetById(orderId);
+        return Ok(result.Order);
     }
 
-    // PATCH: /api/orders/{id}
-    [HttpPatch("{orderId:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> UpdateOrderInfo(int orderId, UpdateOrderDto dto)
+    [HttpPatch("{orderId:int}")]
+    [Authorize(Policy = "OrderWrite")]
+    [SwaggerOperation(
+        Summary = "Update order information",
+        Description = "Updates editable order information such as the customer name."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<OrderResponseDto>> UpdateOrderInfo(int orderId, UpdateOrderDto dto)
     {
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .AsTracking()
-            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        if (order == null) 
-            return NotFound($"Order {orderId} not found.");
+        var result = await _orderService.UpdateOrderInfoAsync(orderId, dto);
 
-        order.CustomerName = dto.CustomerName;
+        if (!result.Success)
+            return MapFailure(result);
 
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(orderId);
-
-        return await GetById(orderId);
+        return Ok(result.Order);
     }
 
-    // PATCH: /api/orders/{id}/items/{inventoryItemId}
-    [HttpPatch("{orderId:int}/items/{inventoryItemId:int}")][Authorize(Policy = "OrderWrite")]
-    public async Task<ActionResult<ResponseOrderDto>> AdjustItemQuantity(int orderId, int inventoryItemId, [FromQuery] int quantityChange)
+    [HttpPatch("{orderId:int}/items/{inventoryItemId:int}")]
+    [Authorize(Policy = "OrderWrite")]
+    [SwaggerOperation(
+        Summary = "Adjust an order item quantity",
+        Description = "Adjusts the quantity of an item already present in an order. Positive values reserve more stock, negative values restore stock."
+    )]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<OrderResponseDto>> AdjustItemQuantity(
+        int orderId,
+        int inventoryItemId,
+        [FromQuery] int quantityChange)
     {
-        var order = await _context.Orders
-            .Include(o => o.OrderItems)
-            .AsTracking()
-            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+        var result = await _orderService.AdjustItemQuantityAsync(orderId, inventoryItemId, quantityChange);
 
-        if (order == null) 
-            return NotFound($"Order {orderId} not found.");
+        if (!result.Success)
+            return MapFailure(result);
 
-        var orderItem = order.OrderItems.FirstOrDefault(i => i.InventoryItemId == inventoryItemId);
-        if (orderItem == null) 
-            return NotFound($"OrderItem with InventoryItem {inventoryItemId} not found.");
-
-        orderItem.QuantityOrdered += quantityChange;
-
-        if (orderItem.QuantityOrdered <= 0)
-        {
-            order.RemoveItem(orderItem.OrderItemId);
-        }
-
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(orderId);
-
-        return await GetById(orderId);
+        return Ok(result.Order);
     }
 
-    // DELETE: /api/orders/{id}
-    [HttpDelete("{orderId:int}")][Authorize(Policy = "AdminOnly")]
+    [HttpDelete("{orderId:int}")]
+    [Authorize(Policy = "AdminOnly")]
+    [SwaggerOperation(
+        Summary = "Delete an order",
+        Description = "Deletes an order and restores all reserved item quantities to stock. This endpoint is restricted to Admin users."
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int orderId)
     {
-        var order = await _context.Orders.FindAsync(orderId);
-        if (order == null) 
+        var deleted = await _orderService.DeleteAsync(orderId);
+
+        if (!deleted)
             return NotFound($"Order {orderId} not found.");
-
-        _context.Orders.Remove(order);
-        await _context.SaveChangesAsync();
-
-        InvalidateCache(orderId);
 
         return NoContent();
     }
 
-    private void InvalidateCache(int? orderId = null)
+        private ActionResult MapFailure(OrderServiceResult result)
     {
-        _cache.Remove(OrdersCacheKey);
-        if (orderId.HasValue) _cache.Remove($"order_{orderId.Value}");
+        return result.ErrorCode switch
+        {
+            OrderErrorCode.OrderNotFound => NotFound(result.Error),
+            OrderErrorCode.InventoryItemNotFound => NotFound(result.Error),
+            OrderErrorCode.OrderItemNotFound => NotFound(result.Error),
+            OrderErrorCode.InsufficientStock => BadRequest(result.Error),
+            OrderErrorCode.ValidationError => BadRequest(result.Error),
+            _ => BadRequest(result.Error ?? "Order operation failed.")
+        };
     }
 }

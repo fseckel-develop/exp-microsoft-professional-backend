@@ -1,89 +1,67 @@
-﻿// App running at http://localhost:5221
+﻿using ClientGenerationDemo.Configuration;
+using ClientGenerationDemo.Demo;
+using ClientGenerationDemo.Presentation;
+using ClientGenerationDemo.Services;
+#if GENERATED_CLIENT
+using GeneratedRecipeApi;
+#endif
 
-using BlogApi; // included after Gneration
+// NOTE:
+// The compile-time symbol GENERATED_CLIENT is set automatically by the 
+// file 'ClientGenerationDemo.csproj' once the client has been generated.
+// So in the next program run the generated client is used as well.
 
+namespace ClientGenerationDemo;
 
-public class Program
+internal static class Program
 {
-    public static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        await UseGeneratedClient();
+        var options = new ApiClientOptions();
+        var writer = new ConsoleWriter();
+
+        writer.WriteTitle("Client Generation Demo");
+
+        await RunClientGenerationAsync(options, writer);
+        await RunManualClientAsync(options, writer);
+
+#if GENERATED_CLIENT
+        await RunGeneratedClientAsync(options, writer);
+#else
+        writer.WriteMessage(
+            "Generated client demo is skipped because the client has not been generated yet.");
+#endif
     }
 
-    // Assisted Generation of API Client:
-    public static async Task NSwagClientGeneration()
+    private static async Task RunClientGenerationAsync(ApiClientOptions options, ConsoleWriter writer)
     {
-        await new SwaggerClientGenerator().GenerateClient();    // creates BlogApiClient.cs
+        writer.WriteSection("NSwag Client Generation");
+
+        var generator = new SwaggerClientGenerator(options);
+        await generator.GenerateClientAsync();
+
+        writer.WriteMessage("Client generation completed.");
     }
 
-    // Usage of Generated Client: 
-    // shorter, safer and easier to maintain
-    public static async Task UseGeneratedClient()
+    private static async Task RunManualClientAsync(ApiClientOptions options, ConsoleWriter writer)
     {
-        var httpClient = new HttpClient();
-        var apiBaseURL = "http://localhost:5221";
-        var blogClient = new BlogApiClient(apiBaseURL, httpClient);
+        using var httpClient = new HttpClient();
 
-        // CREATE
-        var newBlog = new BlogApi.Blog
-        {
-            Title = "Another Blog",
-            Content = "Content of this new Blog"
-        };
-        await blogClient.BlogsPOSTAsync(newBlog);
+        var manualClient = new ManualApiClient(httpClient, options.BaseUrl);
+        var demo = new ManualClientDemo(manualClient, writer);
 
-        // READ
-        var blogs = await blogClient.BlogsAllAsync();
-        foreach (var blog in blogs)
-        {
-            Console.WriteLine($"{blog.Title}: {blog.Content}");
-        }
-
-        // DELETE
-        await blogClient.BlogsDELETEAsync(0);
-
-        // READ again
-        blogs = await blogClient.BlogsAllAsync();
-        foreach (var blog in blogs)
-        {
-            Console.WriteLine($"{blog.Title}: {blog.Content}");
-        }
+        await demo.RunAsync();
     }
 
-    // Manual Client Management without NSwag Assistance:
-    public static async Task ManualClientManagement()
+#if GENERATED_CLIENT
+    private static async Task RunGeneratedClientAsync(ApiClientOptions options, ConsoleWriter writer)
     {
-        var httpClient = new HttpClient();
-        var apiBaseURL = "http://localhost:5221";
+        using var httpClient = new HttpClient();
 
-        var httpResult = await httpClient.GetAsync($"{apiBaseURL}/blogs");
-        if (httpResult.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            Console.WriteLine("Failed to fetch blogs");
-            return;
-        }
+        var generatedClient = new GeneratedApiClient(options.BaseUrl, httpClient);
+        var demo = new GeneratedClientDemo(generatedClient, writer);
 
-        var blogStream = await httpResult.Content.ReadAsStreamAsync();
-        var options = new System.Text.Json.JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var blogs = await System.Text.Json.JsonSerializer.DeserializeAsync<List<Blog>>(blogStream, options);
-        if (blogs != null)
-        {
-            foreach (var blog in blogs)
-            {
-                Console.WriteLine($"{blog.Title}: {blog.Content}");
-            }
-        }
+        await demo.RunAsync();
     }
-}
-
-
-
-public class Blog
-{
-    public string? Title { get; set; }
-    public string? Content { get; set; }
+#endif
 }

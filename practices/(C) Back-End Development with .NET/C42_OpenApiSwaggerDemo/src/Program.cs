@@ -1,103 +1,170 @@
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.OpenApi.Models;
+using OpenApiSwaggerDemo.Contracts;
+using OpenApiSwaggerDemo.Models;
 
-
-var blogs = new List<Blog>() {
-    new Blog { 
-        Title = "First Blog Post", 
-        Content = "This is the content of the first blog post." },
-    new Blog { 
-        Title = "Second Blog Post", 
-        Content = "This is the content of the second blog post." }
+var recipes = new List<Recipe>
+{
+    new()
+    {
+        Id = 1,
+        Name = "Pasta Primavera",
+        Instructions = "Boil pasta, sauté vegetables, mix together."
+    },
+    new()
+    {
+        Id = 2,
+        Name = "Avocado Toast",
+        Instructions = "Toast bread, smash avocado, season, serve."
+    }
 };
 
+var nextRecipeId = recipes.Max(r => r.Id) + 1;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Swagger-enhanced Controller
+builder.Services.AddControllers();
 
-// Adding Swagger to the API services:
+// Register OpenAPI/Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Swagger API Demo",
+        Version = "v1",
+        Description = "A minimal API demo showing OpenAPI/Swagger documentation for CRUD endpoints."
+    });
+});
 
 var app = builder.Build();
 
-
-// Using Swagger only in Development to hide API data from Users
+// Expose Swagger UI in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-
-app.MapGet("/Swagger", () => {});
-
-app.MapGet("Swagger/v1/swagger.json", () => {});
-
-
-// Using TypedResults as Return value is a Best Practice at Microsoft
-// -> Returntype needs to be specified before the lambda expression
-// -> Swagger will use these specified return types for documentation
-
-
-app.MapGet("/blogs/{index}", Results<Ok<Blog>, NotFound<string>> (int index) =>
+// Root
+app.MapGet("/", () => Results.Ok(new
 {
-    if (index < 0 || blogs.Count <= index)
+    message = "Swagger demo is running. Open /swagger to inspect the API documentation."
+}))
+.WithName("GetRoot")
+.WithSummary("Get API root message")
+.WithDescription("Returns a simple message pointing users to the Swagger UI.")
+.WithOpenApi();
+
+var recipeRoutes = app.MapGroup("/recipes").WithTags("Recipes (Minimal API)");
+
+recipeRoutes.MapGet("/", () =>
+{
+    return TypedResults.Ok(recipes.OrderBy(r => r.Id));
+})
+.WithName("GetAllRecipes")
+.WithSummary("Get all recipes")
+.WithDescription("Returns the full collection of recipes.")
+.WithOpenApi();
+
+//
+// CRUD Endpoints
+//
+
+// Create
+recipeRoutes.MapPost(
+    "/",
+    Results<Created<Recipe>, BadRequest<string>> (CreateRecipeRequestDto dto) =>
     {
-        return TypedResults.NotFound("Blog not found");
-    }
-    return TypedResults.Ok(blogs[index]);
-// Custom Configuration of the OpenApi/Swagger Documentaton
-}).WithOpenApi(operation => 
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return TypedResults.BadRequest("Recipe name is required.");
+
+        if (string.IsNullOrWhiteSpace(dto.Instructions))
+            return TypedResults.BadRequest("Recipe instructions are required.");
+
+        var recipe = new Recipe
+        {
+            Id = nextRecipeId++,
+            Name = dto.Name.Trim(),
+            Instructions = dto.Instructions.Trim()
+        };
+
+        recipes.Add(recipe);
+
+        return TypedResults.Created($"/recipes/{recipe.Id}", recipe);
+    })
+.WithName("CreateRecipe")
+.WithSummary("Create a recipe")
+.WithDescription("Creates a new recipe and returns the created resource.")
+.WithOpenApi();
+
+// Read
+recipeRoutes.MapGet(
+    "/{id:int}",
+    Results<Ok<Recipe>, NotFound<string>> (int id) =>
+    {
+        var recipe = recipes.FirstOrDefault(r => r.Id == id);
+
+        if (recipe is null)
+            return TypedResults.NotFound("Recipe not found.");
+
+        return TypedResults.Ok(recipe);
+    })
+.WithName("GetRecipeById")
+.WithSummary("Get a single recipe")
+.WithDescription("Returns a recipe by ID, or 404 if the recipe does not exist.")
+.WithOpenApi(operation =>
 {
-    operation.Parameters![0].Description = "The Index of the blog to retrieve.";
-    operation.Summary = "Get single blog.";
-    operation.Description = "Returns a single blog with the given Index, or none if the Index doesn't exist";
+    operation.Parameters[0].Description = "The unique ID of the recipe.";
     return operation;
 });
 
-
-// All other Routes will also be displayed by Swagger automatically:
-app.MapPost("/blogs", (Blog newBlog) => 
-{
-    blogs.Add(newBlog);
-    return Results.Ok(newBlog);
-});
-
-app.MapGet("/blogs", () => {
-    return blogs;
-});
-
-app.MapPut("/blogs/{index}", (int index, Blog updatedBlog) => 
-{
-    if (index < 0 || index >= blogs.Count)
+// Update
+recipeRoutes.MapPut(
+    "/{id:int}",
+    Results<Ok<Recipe>, NotFound<string>, BadRequest<string>> (int id, UpdateRecipeRequestDto dto) =>
     {
-        return Results.NotFound("Blog not found");
-    }
-    blogs[index] = updatedBlog;
-    return Results.Ok(updatedBlog);
-});
+        var recipe = recipes.FirstOrDefault(r => r.Id == id);
 
-app.MapDelete("/blogs/{index}", (int index) => 
-{
-    if (index < 0 || index >= blogs.Count)
+        if (recipe is null)
+            return TypedResults.NotFound("Recipe not found.");
+
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return TypedResults.BadRequest("Recipe name is required.");
+
+        if (string.IsNullOrWhiteSpace(dto.Instructions))
+            return TypedResults.BadRequest("Recipe instructions are required.");
+
+        recipe.Name = dto.Name.Trim();
+        recipe.Instructions = dto.Instructions.Trim();
+
+        return TypedResults.Ok(recipe);
+    })
+.WithName("UpdateRecipe")
+.WithSummary("Update a recipe")
+.WithDescription("Updates an existing recipe by ID.")
+.WithOpenApi();
+
+// Delete
+recipeRoutes.MapDelete(
+    "/{id:int}",
+    Results<Ok<Recipe>, NotFound<string>> (int id) =>
     {
-        return Results.NotFound("Blog not found");
-    }
-    var deletedBlog = blogs[index];
-    blogs.RemoveAt(index);
-    return Results.Ok(deletedBlog);
-});
+        var recipe = recipes.FirstOrDefault(r => r.Id == id);
+
+        if (recipe is null)
+            return TypedResults.NotFound("Recipe not found.");
+
+        recipes.Remove(recipe);
+
+        return TypedResults.Ok(recipe);
+    })
+.WithName("DeleteRecipe")
+.WithSummary("Delete a recipe")
+.WithDescription("Deletes an existing recipe by ID.")
+.WithOpenApi();
+
+app.MapControllers();
 
 app.Run();
-
-
-
-public class Blog
-{
-    public string? Title { get; set; }
-    public string? Content { get; set; }
-}

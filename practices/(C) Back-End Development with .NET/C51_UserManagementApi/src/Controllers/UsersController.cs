@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using UserManagementApi.Contracts;
+using UserManagementApi.Models;
+using UserManagementApi.Services;
+using UserManagementApi.Validation;
 
-// ----------------------
-// UsersController
-// Controller exposing CRUD operations for `User` backed by `UserService`.
-// Follows simple validation patterns used in the exercises (name + email checks).
-// ----------------------
+namespace UserManagementApi.Controllers;
+
 [ApiController]
 [Route("users")]
-public class UsersController : ControllerBase
+public sealed class UsersController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly ILogger<UsersController> _logger;
@@ -18,60 +19,68 @@ public class UsersController : ControllerBase
         _logger = logger;
     }
 
-    // POST /users
-    // Validate input, create a user and return 201 with location header.
     [HttpPost]
-    public ActionResult<User> Create(User user)
+    public ActionResult<User> Create([FromBody] CreateUserRequestDto dto)
     {
-        if (string.IsNullOrWhiteSpace(user.Name))
-            return BadRequest(new { Error = "Name is required." });
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return BadRequest(new { error = "Name is required." });
 
-        if (!EmailValidator.IsValidEmail(user.Email))
-            return BadRequest(new { Error = "Invalid email format." });
+        if (!EmailValidator.IsValidEmail(dto.Email))
+            return BadRequest(new { error = "Invalid email format." });
+
+        var user = new User
+        {
+            Name = dto.Name.Trim(),
+            Email = dto.Email.Trim()
+        };
 
         var created = _userService.Add(user);
+
+        _logger.LogInformation("Created user with ID {UserId}", created.Id);
+
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    // GET /users
-    // Return all users.
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetAll() => Ok(_userService.GetAll());
+    public ActionResult<IEnumerable<User>> GetAll()
+    {
+        return Ok(_userService.GetAll());
+    }
 
-    // GET /users/{id}
-    // Return a single user or 404.
     [HttpGet("{id:int}")]
     public ActionResult<User> GetById(int id)
     {
         return _userService.TryGet(id, out var user)
             ? Ok(user)
-            : NotFound(new { Error = $"User with ID {id} not found." });
+            : NotFound(new { error = $"User with ID {id} not found." });
     }
 
-    // PUT /users/{id}
-    // Validate and update an existing user.
     [HttpPut("{id:int}")]
-    public ActionResult<User> Update(int id, User updatedUser)
+    public ActionResult<User> Update(int id, [FromBody] UpdateUserRequestDto dto)
     {
-        if (string.IsNullOrWhiteSpace(updatedUser.Name))
-            return BadRequest(new { Error = "Name is required." });
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return BadRequest(new { error = "Name is required." });
 
-        if (!EmailValidator.IsValidEmail(updatedUser.Email))
-            return BadRequest(new { Error = "Invalid email format." });
+        if (!EmailValidator.IsValidEmail(dto.Email))
+            return BadRequest(new { error = "Invalid email format." });
+
+        var updatedUser = new User
+        {
+            Name = dto.Name.Trim(),
+            Email = dto.Email.Trim()
+        };
 
         if (!_userService.Update(id, updatedUser))
-            return NotFound(new { Error = $"User with ID {id} not found." });
+            return NotFound(new { error = $"User with ID {id} not found." });
 
         return Ok(updatedUser);
     }
 
-    // DELETE /users/{id}
-    // Remove the user with the given id.
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         if (!_userService.Remove(id))
-            return NotFound(new { Error = $"User with ID {id} not found." });
+            return NotFound(new { error = $"User with ID {id} not found." });
 
         return NoContent();
     }

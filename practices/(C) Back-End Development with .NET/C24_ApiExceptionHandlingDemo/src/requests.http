@@ -1,0 +1,52 @@
+@BaseAddress = http://localhost:5103
+
+##################################################
+# Root
+##################################################
+
+### Root
+GET {{BaseAddress}}/
+
+
+##################################################
+# Text Analysis - Successful Request
+##################################################
+
+### Calculate average word length
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=hello%20world%20from%20api
+
+### Calculate average word length with mixed punctuation
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=Hello,%20world!%20This%20is%20a%20test.
+
+
+##################################################
+# Validation Errors (400 Bad Request)
+##################################################
+
+### Missing text query parameter
+GET {{BaseAddress}}/api/textanalysis/average-word-length
+
+### Empty text query parameter
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=
+
+### Whitespace-only text query parameter
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=%20%20%20%20
+
+
+##################################################
+# Processing Errors (422 Unprocessable Entity)
+##################################################
+
+### No valid words - numbers only
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=12345%2067890%2011122
+
+### No valid words - punctuation only
+GET {{BaseAddress}}/api/textanalysis/average-word-length?text=!!!%20@@@%20###
+
+
+##################################################
+# Unknown Route / Not Found
+##################################################
+
+### Unknown endpoint
+GET {{BaseAddress}}/api/textanalysis/does-not-exist

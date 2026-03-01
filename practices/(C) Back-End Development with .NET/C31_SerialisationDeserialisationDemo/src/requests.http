@@ -1,0 +1,178 @@
+@BaseAddress = http://localhost:5277
+
+
+##################################################
+# Root
+##################################################
+
+### Root
+GET {{BaseAddress}}/
+
+
+##################################################
+# Serialization Endpoints
+##################################################
+
+### Manual JSON serialization
+GET {{BaseAddress}}/serialize/manual-json
+Accept: application/json
+
+### Custom JSON serialization with snake_case
+GET {{BaseAddress}}/serialize/custom-json
+Accept: application/json
+
+### Automatic JSON serialization using TypedResults.Json
+GET {{BaseAddress}}/serialize/automatic-json
+Accept: application/json
+
+### Simple automatic JSON serialization by returning the object
+GET {{BaseAddress}}/serialize/simple-json
+Accept: application/json
+
+### Manual XML serialization
+GET {{BaseAddress}}/serialize/manual-xml
+Accept: application/xml
+
+
+##################################################
+# Deserialization Endpoints
+##################################################
+
+### Manual JSON deserialization
+POST {{BaseAddress}}/deserialize/manual-json
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "Instructor": "Dr. Brown",
+  "DurationHours": 24
+}
+
+### Custom JSON deserialization
+POST {{BaseAddress}}/deserialize/custom-json
+Content-Type: application/json
+
+{
+  "title": "Cloud Architecture",
+  "instructor": "Dr. Brown",
+  "duration_hours": 24
+}
+
+### Automatic JSON deserialization
+POST {{BaseAddress}}/deserialize/automatic-json
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "Instructor": "Dr. Brown",
+  "DurationHours": 24
+}
+
+### XML deserialization
+POST {{BaseAddress}}/deserialize/xml
+Content-Type: application/xml
+
+<Course>
+  <Title>Cloud Architecture</Title>
+  <Instructor>Dr. Brown</Instructor>
+  <DurationHours>24</DurationHours>
+</Course>
+
+
+##################################################
+# Invalid / Edge Case Requests
+##################################################
+
+### Bad request: XML payload sent to JSON endpoint
+POST {{BaseAddress}}/deserialize/automatic-json
+Content-Type: application/xml
+
+<Course>
+  <Title>Cloud Architecture</Title>
+  <Instructor>Dr. Brown</Instructor>
+  <DurationHours>24</DurationHours>
+</Course>
+
+### Bad request: XML content sent as application/json
+POST {{BaseAddress}}/deserialize/automatic-json
+Content-Type: application/json
+
+<Course>
+  <Title>Cloud Architecture</Title>
+  <Instructor>Dr. Brown</Instructor>
+  <DurationHours>24</DurationHours>
+</Course>
+
+### Missing required property: Title
+POST {{BaseAddress}}/deserialize/manual-json
+Content-Type: application/json
+
+{
+  "Instructor": "Dr. Brown",
+  "DurationHours": 24
+}
+
+### Missing optional property: Instructor
+POST {{BaseAddress}}/deserialize/manual-json
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "DurationHours": 24
+}
+
+### Wrong property type
+POST {{BaseAddress}}/deserialize/manual-json
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "Instructor": "Dr. Brown",
+  "DurationHours": "Twenty Four"
+}
+
+### Extra property allowed by default
+POST {{BaseAddress}}/deserialize/manual-json
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "Instructor": "Dr. Brown",
+  "DurationHours": 24,
+  "Level": "Beginner"
+}
+
+### Extra property disallowed in custom JSON endpoint
+POST {{BaseAddress}}/deserialize/custom-json
+Content-Type: application/json
+
+{
+  "title": "Cloud Architecture",
+  "instructor": "Dr. Brown",
+  "duration_hours": 24,
+  "level": "Beginner"
+}
+
+### Bad request: JSON payload sent to XML endpoint
+POST {{BaseAddress}}/deserialize/xml
+Content-Type: application/json
+
+{
+  "Title": "Cloud Architecture",
+  "Instructor": "Dr. Brown",
+  "DurationHours": 24
+}
+
+
+##################################################
+# File Serialization / Deserialization
+##################################################
+
+### Store course data to binary, XML, and JSON files
+GET {{BaseAddress}}/files/store
+
+### Load course data from stored files
+GET {{BaseAddress}}/files/load
+
+### Reset stored demo files
+DELETE {{BaseAddress}}/files/reset

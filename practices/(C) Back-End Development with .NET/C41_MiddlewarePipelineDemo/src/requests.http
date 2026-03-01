@@ -1,0 +1,163 @@
+@BaseAddress = http://localhost:5062
+
+##################################################
+# Root
+##################################################
+
+### Root endpoint
+GET {{BaseAddress}}/
+
+
+##################################################
+# Workout Sessions API - Read
+##################################################
+
+### Read all workout sessions
+GET {{BaseAddress}}/sessions/
+
+### Read one existing workout session
+GET {{BaseAddress}}/sessions/1
+
+### Read non-existing workout session
+GET {{BaseAddress}}/sessions/999
+
+
+##################################################
+# Workout Sessions API - Create
+##################################################
+
+### Create without API key -> rejected by custom middleware
+POST {{BaseAddress}}/sessions/
+Content-Type: application/json
+
+{
+  "title": "Core Strength",
+  "notes": "Planks, dead bugs, hanging knee raises"
+}
+
+### Create with correct API key -> accepted
+POST {{BaseAddress}}/sessions/
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "Core Strength",
+  "notes": "Planks, dead bugs, hanging knee raises"
+}
+
+### Create with wrong API key -> rejected
+POST {{BaseAddress}}/sessions/
+Content-Type: application/json
+X-Api-Key: thisIsAnotherPassword
+
+{
+  "title": "Core Strength",
+  "notes": "Planks, dead bugs, hanging knee raises"
+}
+
+### Create with missing title -> validation failure
+POST {{BaseAddress}}/sessions/
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "",
+  "notes": "This should fail validation"
+}
+
+
+##################################################
+# Workout Sessions API - Update
+##################################################
+
+### Update existing workout session
+PUT {{BaseAddress}}/sessions/1
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "Leg Day Updated",
+  "notes": "Squats, lunges, calf raises, leg press"
+}
+
+### Update non-existing workout session
+PUT {{BaseAddress}}/sessions/999
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "Unknown Session",
+  "notes": "This session does not exist"
+}
+
+### Update without API key -> rejected by custom middleware
+PUT {{BaseAddress}}/sessions/1
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Update",
+  "notes": "Should be blocked"
+}
+
+### Update with missing title -> validation failure
+PUT {{BaseAddress}}/sessions/1
+Content-Type: application/json
+X-Api-Key: thisIsABadPassword
+
+{
+  "title": "",
+  "notes": "This should fail validation"
+}
+
+
+##################################################
+# Workout Sessions API - Delete
+##################################################
+
+### Delete existing workout session
+DELETE {{BaseAddress}}/sessions/2
+X-Api-Key: thisIsABadPassword
+
+### Delete non-existing workout session
+DELETE {{BaseAddress}}/sessions/999
+X-Api-Key: thisIsABadPassword
+
+### Delete without API key -> rejected by custom middleware
+DELETE {{BaseAddress}}/sessions/1
+
+
+##################################################
+# Security Pipeline Demo - Successful Flow
+##################################################
+
+### Security demo success path
+GET {{BaseAddress}}/security-demo?secure=true&authenticated=true&input=Safe123
+
+### Security demo success path with another valid alphanumeric input
+GET {{BaseAddress}}/security-demo?secure=true&authenticated=true&input=Workout2025
+
+
+##################################################
+# Security Pipeline Demo - Failure Cases
+##################################################
+
+### Missing secure=true -> blocked by simulated HTTPS requirement middleware
+GET {{BaseAddress}}/security-demo?authenticated=true&input=Safe123
+
+### secure=false -> blocked by simulated HTTPS requirement middleware
+GET {{BaseAddress}}/security-demo?secure=false&authenticated=true&input=Safe123
+
+### Missing authenticated=true -> blocked by simulated auth middleware
+GET {{BaseAddress}}/security-demo?secure=true&input=Safe123
+
+### authenticated=false -> blocked by simulated auth middleware
+GET {{BaseAddress}}/security-demo?secure=true&authenticated=false&input=Safe123
+
+### Invalid input with script tag -> blocked by input validation middleware
+GET {{BaseAddress}}/security-demo?secure=true&authenticated=true&input=<script>
+
+### Invalid input with punctuation -> blocked by input validation middleware
+GET {{BaseAddress}}/security-demo?secure=true&authenticated=true&input=Bad-Input!
+
+### Unauthorized path inside security branch
+GET {{BaseAddress}}/security-demo/unauthorized?secure=true&authenticated=true&input=Safe123

@@ -1,0 +1,101 @@
+@BaseAddress = http://localhost:5072
+
+
+##################################################
+# General Routing Demo
+##################################################
+
+### Root
+GET {{BaseAddress}}/
+
+### Route with both parameters set
+GET {{BaseAddress}}/users/42/posts/my-first-post
+
+### Route using optional slug parameter
+GET {{BaseAddress}}/users/42/posts/
+
+### Invalid route because ID must be >= 0
+GET {{BaseAddress}}/users/-10/posts/slug-example
+
+### Catch-all route
+GET {{BaseAddress}}/files/documents/report.pdf
+
+### Query string parameters
+GET {{BaseAddress}}/search?query=api+development&page=2
+
+
+##################################################
+# Task CRUD Demo
+##################################################
+
+### Read all tasks
+GET {{BaseAddress}}/tasks/
+
+### Read completed tasks
+GET {{BaseAddress}}/tasks/completed
+
+### Read one task by ID
+GET {{BaseAddress}}/tasks/1
+
+
+### Create a new task
+POST {{BaseAddress}}/tasks/
+Content-Type: application/json
+
+{
+  "title": "Prepare presentation",
+  "description": "Finish slides for the architecture review"
+}
+
+### Create another new task
+POST {{BaseAddress}}/tasks/
+Content-Type: application/json
+
+{
+  "title": "Refactor middleware demo",
+  "description": "Clean up routing and logging examples"
+}
+
+### Create invalid task with missing title
+POST {{BaseAddress}}/tasks/
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "This should trigger validation"
+}
+
+
+### Update an existing task
+PUT {{BaseAddress}}/tasks/1
+Content-Type: application/json
+
+{
+  "title": "Buy groceries and snacks",
+  "description": "Milk, Eggs, Bread, Coffee",
+  "isCompleted": true
+}
+
+### Update non-existing task
+PUT {{BaseAddress}}/tasks/999
+Content-Type: application/json
+
+{
+  "title": "Unknown task",
+  "description": "This task does not exist",
+  "isCompleted": false
+}
+
+
+### Mark a task as completed
+PATCH {{BaseAddress}}/tasks/2/complete
+
+### Mark a non-existing task as completed
+PATCH {{BaseAddress}}/tasks/999/complete
+
+
+### Delete a task
+DELETE {{BaseAddress}}/tasks/2
+
+### Delete a non-existing task
+DELETE {{BaseAddress}}/tasks/999

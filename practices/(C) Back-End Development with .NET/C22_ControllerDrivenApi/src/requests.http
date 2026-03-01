@@ -1,0 +1,113 @@
+@BaseAddress = http://localhost:5020
+
+
+##################################################
+# Root
+##################################################
+
+### Root
+GET {{BaseAddress}}/
+
+
+##################################################
+# Product CRUD
+##################################################
+
+### Read all products
+GET {{BaseAddress}}/controlled/products
+
+### Read all products filtered by query
+GET {{BaseAddress}}/controlled/products?query=apple
+
+### Read all products filtered by max price
+GET {{BaseAddress}}/controlled/products?maxPrice=0.4
+
+### Read all products filtered by query and max price
+GET {{BaseAddress}}/controlled/products?query=juicy&maxPrice=1.0
+
+### Read one product by ID
+GET {{BaseAddress}}/controlled/products/1
+
+### Read non-existing product
+GET {{BaseAddress}}/controlled/products/999
+
+
+##################################################
+# Create
+##################################################
+
+### Create a new product
+POST {{BaseAddress}}/controlled/products
+Content-Type: application/json
+
+{
+  "name": "New Product",
+  "description": "A total must-have",
+  "price": 19.99
+}
+
+### Create invalid product with empty name
+POST {{BaseAddress}}/controlled/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This should fail validation",
+  "price": 19.99
+}
+
+### Create invalid product with negative price
+POST {{BaseAddress}}/controlled/products
+Content-Type: application/json
+
+{
+  "name": "Broken Product",
+  "description": "This should fail validation",
+  "price": -5.00
+}
+
+
+##################################################
+# Update
+##################################################
+
+### Update an existing product
+PUT {{BaseAddress}}/controlled/products/1
+Content-Type: application/json
+
+{
+  "name": "Updated Product",
+  "description": "The price of this product has changed.",
+  "price": 9.99
+}
+
+### Update non-existing product
+PUT {{BaseAddress}}/controlled/products/999
+Content-Type: application/json
+
+{
+  "name": "Unknown Product",
+  "description": "This product does not exist.",
+  "price": 5.99
+}
+
+### Update invalid product with empty name
+PUT {{BaseAddress}}/controlled/products/1
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "Invalid update request",
+  "price": 5.99
+}
+
+
+##################################################
+# Delete
+##################################################
+
+### Delete an existing product
+DELETE {{BaseAddress}}/controlled/products/3
+
+### Delete non-existing product
+DELETE {{BaseAddress}}/controlled/products/999

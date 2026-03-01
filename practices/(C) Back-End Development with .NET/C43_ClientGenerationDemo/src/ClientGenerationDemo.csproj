@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="Exists('Generated/GeneratedApiClient.cs')">
+    <DefineConstants>$(DefineConstants);GENERATED_CLIENT</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.6.3" />
   </ItemGroup>

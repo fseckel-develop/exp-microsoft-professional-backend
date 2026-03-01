@@ -1,130 +1,215 @@
 ### Variables
-@host = http://localhost:5291
-@validToken = Bearer my-secret-token
-@invalidToken = Bearer invalid-token
+@BaseAddress = http://localhost:5291
+@ValidToken = Bearer my-secret-token
+@InvalidToken = Bearer invalid-token
+
+
+##################################################
+# Create
+##################################################
 
 ### Create user - valid
-POST {{host}}/users
-Authorization: {{validToken}}
+POST {{BaseAddress}}/users
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "Alice",
-    "email": "alice@example.com"
+  "name": "Alice",
+  "email": "alice@example.com"
 }
 
 ### Create user - invalid (empty name)
-POST {{host}}/users
-Authorization: {{validToken}}
+POST {{BaseAddress}}/users
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "",
-    "email": "bob@example.com"
+  "name": "",
+  "email": "bob@example.com"
 }
 
 ### Create user - invalid (bad email)
-POST {{host}}/users
-Authorization: {{validToken}}
+POST {{BaseAddress}}/users
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "Charlie",
-    "email": "invalid-email"
+  "name": "Charlie",
+  "email": "invalid-email"
+}
+
+### Create user - invalid (missing name)
+POST {{BaseAddress}}/users
+Authorization: {{ValidToken}}
+Content-Type: application/json
+
+{
+  "email": "missing.name@example.com"
+}
+
+### Create user - invalid (missing email)
+POST {{BaseAddress}}/users
+Authorization: {{ValidToken}}
+Content-Type: application/json
+
+{
+  "name": "Missing Email"
 }
 
 ### Create user - unauthorized
-POST {{host}}/users
-Authorization: {{invalidToken}}
+POST {{BaseAddress}}/users
+Authorization: {{InvalidToken}}
 Content-Type: application/json
 
 {
-    "name": "Eve",
-    "email": "eve@example.com"
+  "name": "Eve",
+  "email": "eve@example.com"
 }
 
-### Get all users
-GET {{host}}/users
-Authorization: {{validToken}}
-
-### Get all users - unauthorized
-GET {{host}}/users
-Authorization: {{invalidToken}}
-
-### Get user by ID - existing
-GET {{host}}/users/1
-Authorization: {{validToken}}
-
-### Get user by ID - non-existent
-GET {{host}}/users/999
-Authorization: {{validToken}}
-
-### Get user by ID - unauthorized
-GET {{host}}/users/1
-Authorization: {{invalidToken}}
-
-### Update user - valid
-PUT {{host}}/users/1
-Authorization: {{validToken}}
+### Create user - missing Authorization header
+POST {{BaseAddress}}/users
 Content-Type: application/json
 
 {
-    "name": "Alice Updated",
-    "email": "alice.updated@example.com"
+  "name": "No Token",
+  "email": "no.token@example.com"
+}
+
+
+##################################################
+# Read
+##################################################
+
+### Get all users
+GET {{BaseAddress}}/users
+Authorization: {{ValidToken}}
+
+### Get all users - unauthorized
+GET {{BaseAddress}}/users
+Authorization: {{InvalidToken}}
+
+### Get all users - missing Authorization header
+GET {{BaseAddress}}/users
+
+### Get user by ID - existing
+GET {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
+
+### Get user by ID - non-existent
+GET {{BaseAddress}}/users/999
+Authorization: {{ValidToken}}
+
+### Get user by ID - unauthorized
+GET {{BaseAddress}}/users/1
+Authorization: {{InvalidToken}}
+
+### Get user by ID - invalid route value
+GET {{BaseAddress}}/users/abc
+Authorization: {{ValidToken}}
+
+
+##################################################
+# Update
+##################################################
+
+### Update user - valid
+PUT {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
+Content-Type: application/json
+
+{
+  "name": "Alice Updated",
+  "email": "alice.updated@example.com"
 }
 
 ### Update user - invalid (empty name)
-PUT {{host}}/users/1
-Authorization: {{validToken}}
+PUT {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "",
-    "email": "alice.updated@example.com"
+  "name": "",
+  "email": "alice.updated@example.com"
 }
 
 ### Update user - invalid (bad email)
-PUT {{host}}/users/1
-Authorization: {{validToken}}
+PUT {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "Alice Updated",
-    "email": "not-an-email"
+  "name": "Alice Updated",
+  "email": "not-an-email"
+}
+
+### Update user - invalid (missing email)
+PUT {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
+Content-Type: application/json
+
+{
+  "name": "Alice Updated"
 }
 
 ### Update user - non-existent
-PUT {{host}}/users/999
-Authorization: {{validToken}}
+PUT {{BaseAddress}}/users/999
+Authorization: {{ValidToken}}
 Content-Type: application/json
 
 {
-    "name": "Nobody",
-    "email": "nobody@example.com"
+  "name": "Nobody",
+  "email": "nobody@example.com"
 }
 
 ### Update user - unauthorized
-PUT {{host}}/users/1
-Authorization: {{invalidToken}}
+PUT {{BaseAddress}}/users/1
+Authorization: {{InvalidToken}}
 Content-Type: application/json
 
 {
-    "name": "Hacker",
-    "email": "hacker@example.com"
+  "name": "Hacker",
+  "email": "hacker@example.com"
 }
 
+### Update user - missing Authorization header
+PUT {{BaseAddress}}/users/1
+Content-Type: application/json
+
+{
+  "name": "No Token Update",
+  "email": "no.token.update@example.com"
+}
+
+
+##################################################
+# Delete
+##################################################
+
 ### Delete user - existing
-DELETE {{host}}/users/1
-Authorization: {{validToken}}
+DELETE {{BaseAddress}}/users/1
+Authorization: {{ValidToken}}
 
 ### Delete user - non-existent
-DELETE {{host}}/users/999
-Authorization: {{validToken}}
+DELETE {{BaseAddress}}/users/999
+Authorization: {{ValidToken}}
 
 ### Delete user - unauthorized
-DELETE {{host}}/users/1
-Authorization: {{invalidToken}}
+DELETE {{BaseAddress}}/users/1
+Authorization: {{InvalidToken}}
 
-### Trigger unhandled exception (simulate by sending invalid route data type)
-GET {{host}}/users/abc
-Authorization: {{validToken}}
+### Delete user - missing Authorization header
+DELETE {{BaseAddress}}/users/1
+
+
+##################################################
+# Notes
+##################################################
+
+### Typical demo flow:
+### 1. Create one or two valid users
+### 2. Read all users
+### 3. Read one user by ID
+### 4. Update that user
+### 5. Delete that user
+###
+### Since this API uses an in-memory singleton store, request order affects later results.

@@ -1,64 +1,185 @@
-@C4_openapi_swagger_HostAddress = http://localhost:5221
+@BaseAddress = http://localhost:5221
 
 
+##################################################
+# Root + Swagger
+##################################################
 
-###### GET Swagger UI
+### Root
+GET {{BaseAddress}}/
 
-GET {{C4_openapi_swagger_HostAddress}}/Swagger/
+### Swagger UI
+GET {{BaseAddress}}/swagger/
 
-###### GET Swagger data as JSON
-
-GET {{C4_openapi_swagger_HostAddress}}/Swagger/v1/swagger.json
-
-######
-
-
-
-
-###### GET Request to read all blogs
-
-GET {{C4_openapi_swagger_HostAddress}}/blogs/
-
-###### GET Request to read one specific blog
-
-GET {{C4_openapi_swagger_HostAddress}}/blogs/1
-
-######
+### Swagger JSON
+GET {{BaseAddress}}/swagger/v1/swagger.json
 
 
+##################################################
+# Minimal API - Recipes
+##################################################
+
+### Get all recipes
+GET {{BaseAddress}}/recipes/
+
+### Get one recipe by ID
+GET {{BaseAddress}}/recipes/1
+
+### Get non-existing recipe
+GET {{BaseAddress}}/recipes/999
 
 
-###### POST Request without Password => caught by custom middleware
-
-POST {{C4_openapi_swagger_HostAddress}}/blogs/
+### Create a new recipe
+POST {{BaseAddress}}/recipes/
 Content-Type: application/json
 
 {
-  "title": "Newly Created Blog Post",
-  "content": "This is the content of the newly created blog post."
+  "name": "Chickpea Salad",
+  "instructions": "Rinse chickpeas, chop veggies, mix with olive oil and lemon, season to taste."
 }
 
-###### POST Request with correct Password => accepted by custom middleware
-
-POST {{C4_openapi_swagger_HostAddress}}/blogs/
+### Create invalid recipe with missing name
+POST {{BaseAddress}}/recipes/
 Content-Type: application/json
-X-Api-Key: thisIsABadPassword
 
 {
-  "title": "Newly Created Blog Post",
-  "content": "This is the content of the newly created blog post."
+  "name": "",
+  "instructions": "This should fail validation."
 }
 
-###### POST Request with wrong Password => accepted by custom middleware
-
-POST {{C4_openapi_swagger_HostAddress}}/blogs/
+### Create invalid recipe with missing instructions
+POST {{BaseAddress}}/recipes/
 Content-Type: application/json
-X-Api-Key: thisIsAnotherPassword
 
 {
-  "title": "Newly Created Blog Post",
-  "content": "This is the content of the newly created blog post."
+  "name": "Invalid Recipe",
+  "instructions": ""
 }
 
-#######
 
+### Update an existing recipe
+PUT {{BaseAddress}}/recipes/1
+Content-Type: application/json
+
+{
+  "name": "Chickpea Salad (Updated)",
+  "instructions": "Add feta and fresh herbs, then toss with dressing."
+}
+
+### Update non-existing recipe
+PUT {{BaseAddress}}/recipes/999
+Content-Type: application/json
+
+{
+  "name": "Unknown Recipe",
+  "instructions": "This recipe does not exist."
+}
+
+### Update invalid recipe with empty name
+PUT {{BaseAddress}}/recipes/1
+Content-Type: application/json
+
+{
+  "name": "",
+  "instructions": "This should fail validation."
+}
+
+
+### Delete an existing recipe
+DELETE {{BaseAddress}}/recipes/1
+
+### Delete non-existing recipe
+DELETE {{BaseAddress}}/recipes/999
+
+
+##################################################
+# Controller API - Cookbooks
+##################################################
+
+### Get all cookbooks
+GET {{BaseAddress}}/controller/cookbooks
+
+### Get one cookbook by ID
+GET {{BaseAddress}}/controller/cookbooks/1
+
+### Get non-existing cookbook
+GET {{BaseAddress}}/controller/cookbooks/999
+
+
+### Create a new cookbook
+POST {{BaseAddress}}/controller/cookbooks
+Content-Type: application/json
+
+{
+  "title": "Simple Summer Meals",
+  "author": "Ava Brooks",
+  "recipeCount": 12
+}
+
+### Create invalid cookbook with missing title
+POST {{BaseAddress}}/controller/cookbooks
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "Ava Brooks",
+  "recipeCount": 12
+}
+
+### Create invalid cookbook with missing author
+POST {{BaseAddress}}/controller/cookbooks
+Content-Type: application/json
+
+{
+  "title": "Simple Summer Meals",
+  "author": "",
+  "recipeCount": 12
+}
+
+### Create invalid cookbook with negative recipe count
+POST {{BaseAddress}}/controller/cookbooks
+Content-Type: application/json
+
+{
+  "title": "Broken Cookbook",
+  "author": "Ava Brooks",
+  "recipeCount": -1
+}
+
+
+### Update an existing cookbook
+PUT {{BaseAddress}}/controller/cookbooks/1
+Content-Type: application/json
+
+{
+  "title": "Weeknight Dinners Revised",
+  "author": "Jamie Carter",
+  "recipeCount": 30
+}
+
+### Update non-existing cookbook
+PUT {{BaseAddress}}/controller/cookbooks/999
+Content-Type: application/json
+
+{
+  "title": "Unknown Cookbook",
+  "author": "Unknown Author",
+  "recipeCount": 1
+}
+
+### Update invalid cookbook with empty title
+PUT {{BaseAddress}}/controller/cookbooks/1
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "Jamie Carter",
+  "recipeCount": 30
+}
+
+
+### Delete an existing cookbook
+DELETE {{BaseAddress}}/controller/cookbooks/2
+
+### Delete non-existing cookbook
+DELETE {{BaseAddress}}/controller/cookbooks/999

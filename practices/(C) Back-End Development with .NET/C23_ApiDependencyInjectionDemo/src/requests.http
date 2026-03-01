@@ -1,0 +1,35 @@
+@BaseAddress = http://localhost:5248
+
+
+###
+# Root endpoint
+# Shows the service instance ID and recorded messages
+GET {{BaseAddress}}/
+Accept: application/json
+
+###
+# Call root endpoint again
+# Compare instance IDs to observe DI lifetime behavior
+GET {{BaseAddress}}/
+Accept: application/json
+
+###
+# Details endpoint
+# Shows path info and explanation of DI lifetimes
+GET {{BaseAddress}}/details
+Accept: application/json
+
+###
+# Call details endpoint again
+# Useful to compare instance IDs across requests
+GET {{BaseAddress}}/details
+Accept: application/json
+
+###
+# Alternating endpoint test
+GET {{BaseAddress}}/
+Accept: application/json
+
+###
+GET {{BaseAddress}}/details
+Accept: application/json

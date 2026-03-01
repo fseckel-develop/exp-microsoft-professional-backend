@@ -69,7 +69,7 @@ These define qualities, constraints, and standards - not features. (How the syst
 	- The application must run on any system capable of running .NET/C# console applications (Windows, Linux, macOS).
 
 ---
-### Project Objectives:
+## Project Objectives:
 
 These describe the _specific goals the final system must achieve_.
 
@@ -128,4 +128,4 @@ These describe the _specific goals the final system must achieve_.
 
 ---
 
-![[flowchart_grade_management.png]]
+![[project_flowchart_grade_management.png]]

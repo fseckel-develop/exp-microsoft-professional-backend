@@ -1,59 +1,27 @@
-﻿public class Program
-{
-    public static void Main(string[] args)
-    {
-        List<Animal> animals = new List<Animal>();
-        animals.Add(new Dog());
-        animals.Add(new Cat());
+﻿using InheritancePolymorphismDemo.Channels;
+using InheritancePolymorphismDemo.Models;
 
-        foreach (Animal animal in animals)
+namespace InheritancePolymorphismDemo;
+
+internal static class Program
+{
+    private static void Main()
+    {
+        var message = new NotificationMessage(
+            Recipient: "customer-123",
+            Subject: "Order Update",
+            Body: "Your order has been shipped and is on its way.");
+
+        List<NotificationChannel> channels =
+        [
+            new EmailChannel(),
+            new SmsChannel(),
+            new PushChannel()
+        ];
+
+        foreach (var channel in channels)
         {
-            animal.Eat();
-            animal.MakeSound();
+            channel.Process(message);
         }
-    }
-}
-
-public interface IAnimal
-{
-    void Eat();
-}
-
-public class Animal : IAnimal
-{
-    public virtual void Eat()
-    {
-        Console.WriteLine("Eating some animal food");
-    }
-
-    public virtual void MakeSound()
-    {
-        Console.WriteLine("Making some animal sound");
-    }
-}
-
-public class Dog : Animal
-{
-    public override void Eat()
-    {
-        Console.WriteLine("Eating some Kibble");
-    }
-
-    public override void MakeSound()
-    {
-        Console.WriteLine("Bark! Bark!");
-    }
-}
-
-public class Cat : Animal
-{
-    public override void Eat()
-    {
-        Console.WriteLine("Eating some Tuna");
-    }
-
-    public override void MakeSound()
-    {
-        Console.WriteLine("Meooow...");
     }
 }

@@ -1,32 +1,31 @@
 ## Step 1: Configure the Database Structure
 
 ```sql
-CREATE DATABASE EmployeeDB;
-USE EmployeeDB;
+CREATE DATABASE StoreDB;
+USE StoreDB;
 ```
 
 ```sql
-CREATE TABLE Employees (
+CREATE TABLE Products (
     ID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    Department VARCHAR(50),
-    Salary DECIMAL(10,2),
-    YearsExperience INT
+    ProductName VARCHAR(50),
+    Category VARCHAR(50),
+    Brand VARCHAR(50),
+    Price DECIMAL(10,2),
+    StockQuantity INT
 );
 ```
 
 ```sql
-INSERT INTO Employees 
-	(FirstName, LastName, Department, Salary, YearsExperience) 
+INSERT INTO Products 
+	(ProductName, Category, Brand, Price, StockQuantity) 
 VALUES
-	('John', 'Doe', 'HR', 60000, 10),
-	('Jane', 'Smith', 'Finance', 70000, 8),
-	('Michael', 'Brown', 'IT', 50000, 5),
-	('Emily', 'Davis', 'HR', 45000, 2),
-	('Chris', 'Wilson', 'Finance', 80000, 15);
+	('Laptop X1', 'Electronics', 'TechPro', 1200.00, 15),
+	('Smartphone A5', 'Electronics', 'MobileMax', 800.00, 25),
+	('Office Chair', 'Furniture', 'ComfortLine', 150.00, 40),
+	('Desk Lamp', 'Furniture', 'BrightHome', 45.00, 60),
+	('Running Shoes', 'Sportswear', 'FastTrack', 120.00, 30);
 ```
-
 
 ---
 ## Step 2: Using SQL Functions for Data Manipulation
@@ -179,4 +178,153 @@ SELECT
 	SUM(Salary) AS TotalSalary 
 	FROM Employees 
 	GROUP BY HireYear;
+```
+
+## Step 2: Using SQL Functions for Data Manipulation
+
+(1) Concatenate product name and brand:
+
+```sql
+SELECT 
+	CONCAT(ProductName, ' - ', Brand) AS ProductLabel 
+	FROM Products;
+```
+
+(2) Convert category to uppercase:
+
+```sql
+SELECT 
+	UPPER(Category) AS UpperCategory 
+	FROM Products;
+```
+
+(3) Convert brand to lowercase:
+
+```sql
+SELECT 
+	LOWER(Brand) AS LowerBrand 
+	FROM Products;
+```
+
+(4) Calculate the length of product names:
+
+```sql
+SELECT 
+	LENGTH(ProductName) AS ProductNameLength 
+	FROM Products;
+```
+
+(5) Extract first three characters of product names:
+
+```sql
+SELECT 
+	SUBSTRING(ProductName, 1, 3) AS ProductSnippet 
+	FROM Products;
+```
+
+---
+## Step 3: Using Aggregate Functions
+
+(1) Count total products:
+
+```sql
+SELECT 
+	COUNT(*) AS TotalProducts 
+	FROM Products;
+```
+
+(2) Calculate total inventory value:
+
+```sql
+SELECT 
+	SUM(Price * StockQuantity) AS TotalInventoryValue
+	FROM Products;
+```
+
+(3) Average price in Electronics:
+
+```sql
+SELECT 
+	AVG(Price) AS AvgElectronicsPrice 
+	FROM Products 
+	WHERE Category = 'Electronics';
+```
+
+(4) Minimum price:
+
+```sql
+SELECT 
+	MIN(Price) AS MinPrice 
+	FROM Products;
+```
+
+(5) Maximum price in Furniture:
+
+```sql
+SELECT 
+	MAX(Price) AS MaxFurniturePrice 
+	FROM Products 
+	WHERE Category = 'Furniture';
+```
+
+---
+## Step 4: Combining Aggregate Functions with GROUP BY
+
+(1) Total inventory value by category:
+
+```sql
+SELECT Category, 
+	SUM(Price * StockQuantity) AS TotalInventoryValue 
+	FROM Products 
+	GROUP BY Category;
+```
+
+(2) Average price by category:
+
+```sql
+SELECT Category, 
+	AVG(Price) AS AvgPrice 
+	FROM Products 
+	GROUP BY Category;
+```
+
+(3) Count products by category:
+
+```sql
+SELECT Category, 
+	COUNT(*) AS ProductCount 
+	FROM Products 
+	GROUP BY Category;
+```
+
+---
+## Step 5: Exploring Advanced Functions
+
+(1) Length of concatenated product labels:
+
+```sql
+SELECT 
+	CONCAT(ProductName, ' - ', Brand) AS ProductLabel, 
+	LENGTH(CONCAT(ProductName, ' - ', Brand)) AS ProductLabelLength 
+	FROM Products;
+```
+
+(2) Count products by year added:
+
+```sql
+SELECT 
+	YEAR(DateAdded) AS AddedYear, 
+	COUNT(*) AS ProductCount 
+	FROM Products 
+	GROUP BY AddedYear;
+```
+
+(3) Total inventory value by year added:
+
+```sql
+SELECT 
+	YEAR(DateAdded) AS AddedYear, 
+	SUM(Price * StockQuantity) AS TotalInventoryValue 
+	FROM Products 
+	GROUP BY AddedYear;
 ```

@@ -1,149 +1,137 @@
 ## Step 1: Configure the Database Structure
 
 ```sql
-CREATE DATABASE EmployeeDB;
-USE EmployeeDB;
+CREATE DATABASE StoreDB;
+USE StoreDB;
 ```
 
 ```sql
-CREATE TABLE Employees (
+CREATE TABLE Products (
     ID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    Department VARCHAR(50),
-    Salary DECIMAL(10,2),
-    YearsExperience INT
+    ProductName VARCHAR(50),
+    Category VARCHAR(50),
+    Brand VARCHAR(50),
+    Price DECIMAL(10,2),
+    StockQuantity INT
 );
 ```
 
 ```sql
-INSERT INTO Employees 
-	(FirstName, LastName, Department, Salary, YearsExperience) 
+INSERT INTO Products 
+	(ProductName, Category, Brand, Price, StockQuantity) 
 VALUES
-	('John', 'Doe', 'HR', 60000, 10),
-	('Jane', 'Smith', 'Finance', 70000, 8),
-	('Michael', 'Brown', 'IT', 50000, 5),
-	('Emily', 'Davis', 'HR', 45000, 2),
-	('Chris', 'Wilson', 'Finance', 80000, 15);
+	('Laptop X1', 'Electronics', 'TechPro', 1200.00, 15),
+	('Smartphone A5', 'Electronics', 'MobileMax', 800.00, 25),
+	('Office Chair', 'Furniture', 'ComfortLine', 150.00, 40),
+	('Desk Lamp', 'Furniture', 'BrightHome', 45.00, 60),
+	('Running Shoes', 'Sportswear', 'FastTrack', 120.00, 30);
 ```
-
 
 ---
 ## Step 2: Writing SELECT Statements
 
-(1) Retrieve all columns: 
+(1) Retrieve all columns:
 
 ```sql
-SELECT * FROM Employees;
+SELECT * FROM Products;
 ```
 
-
-(2) Retrieve specific columns: 
+(2) Retrieve specific columns:
 
 ```sql
-SELECT FirstName, LastName FROM Employees;
+SELECT ProductName, Price FROM Products;
 ```
 
-
-(3) Retrieve unique departments: 
+(3) Retrieve unique categories:
 
 ```sql
-SELECT DISTINCT Department FROM Employees;
+SELECT DISTINCT Category FROM Products;
 ```
-
 
 ---
 ## Step 3: Using the WHERE Clause
 
-(1) Employees in HR: 
+(1) Products in Electronics category:
 
 ```sql
-SELECT * FROM Employees WHERE Department = 'HR';
-``` 
-
-
-(2) Finance employees with salary > 60,000: 
-
-```sql
-SELECT * FROM Employees WHERE Department = 'Finance' AND Salary > 60000;
+SELECT * FROM Products WHERE Category = 'Electronics';
 ```
 
-
-(3) Employees with >5 years and salary <70,000: 
+(2) Furniture products with price > 100:
 
 ```sql
-SELECT * FROM Employees WHERE YearsExperience > 5 AND Salary < 70000;
+SELECT * FROM Products WHERE Category = 'Furniture' AND Price > 100;
 ```
 
+(3) Products with stock >20 and price <1000:
+
+```sql
+SELECT * FROM Products WHERE StockQuantity > 20 AND Price < 1000;
+```
 
 ---
 ## Step 4: Sorting with the ORDER BY Clause
 
-(1) Sort by LastName: 
+(1) Sort by ProductName:
 
 ```sql
-SELECT * FROM Employees ORDER BY LastName ASC;
+SELECT * FROM Products ORDER BY ProductName ASC;
 ```
 
-
-(2) HR employees sorted by salary descending: 
+(2) Electronics products sorted by price descending:
 
 ```sql
-SELECT * FROM Employees WHERE Department = 'HR' ORDER BY Salary DESC;
+SELECT * FROM Products WHERE Category = 'Electronics' ORDER BY Price DESC;
 ```
 
-
-(3) Top 3 earners: 
+(3) Top 3 most expensive products:
 
 ```sql
-SELECT * FROM Employees ORDER BY Salary DESC LIMIT 3;
+SELECT * FROM Products ORDER BY Price DESC LIMIT 3;
 ```
-
 
 ---
-## Step 5: More complex Queries
+## Step 5: More Complex Queries
 
-(1) IT employees sorted by experience: 
+(1) Furniture products sorted by stock quantity:
 
 ```sql
 SELECT * FROM 
-	Employees 
+	Products 
 	WHERE 
-		Department = 'IT' AND YearsExperience > 3 
+		Category = 'Furniture' AND StockQuantity > 10 
 	ORDER BY 
-		YearsExperience DESC;
+		StockQuantity DESC;
 ```
 
-
-(2) Salary between 50.000 and 75.000 sorted by first name: 
+(2) Price between 100 and 900 sorted by product name:
 
 ```sql
 SELECT * FROM 
-	Employees 
+	Products 
 	WHERE 
-		Salary BETWEEN 50000 AND 75000 
+		Price BETWEEN 100 AND 900 
 	ORDER BY 
-		FirstName ASC;
+		ProductName ASC;
 ```
 
 ---
 ## Step 6: Aggregate Queries
 
-(1) Total Salaries by Department via SQL Aggregate Query:
+(1) Total Inventory Value by Category via SQL Aggregate Query:
 
 ```sql
-SELECT Department, 
-	SUM(Salary) AS TotalSalary 
-	FROM Employees 
-	GROUP BY Department;
+SELECT Category, 
+	SUM(Price * StockQuantity) AS TotalInventoryValue 
+	FROM Products 
+	GROUP BY Category;
 ```
 
-
-(2) Employee Count by Department via SQL Aggregate Query:
+(2) Product Count by Category via SQL Aggregate Query:
 
 ```sql
-SELECT Department, 
-	COUNT(*) AS EmployeeCount 
-	FROM Employees 
-	GROUP BY Department;
+SELECT Category, 
+	COUNT(*) AS ProductCount 
+	FROM Products 
+	GROUP BY Category;
 ```

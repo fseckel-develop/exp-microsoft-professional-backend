@@ -1,26 +1,35 @@
+## Project Stage Overview
 
-In Activity 1, you wrote basic SQL queries to retrieve and filter inventory data. Now, SmartShop has additional requirements:
+In Activity 1, you focused on basic SELECT queries to retrieve and filter inventory data. Activity 2 expands the system’s analytical capabilities to support more advanced business insights.
 
-- Analysing sales trends by joining product and sales data.
-- Generating reports on supplier performance using aggregate functions.
-- Combining data from multiple tables to track inventory levels across stores.
+SmartShop now requires deeper analysis across multiple related tables, including:
 
-SmartShop’s new needs include:
+- Examining sales patterns over time and by store location
+- Evaluating supplier reliability and performance
+- Consolidating inventory data from multiple stores for reporting
 
-- Tracking product sales by date and store.
-- Identifying top-performing suppliers based on delivered stock.
-- Combining inventory data across stores for consolidated reporting.
+This stage introduces JOIN operations, subqueries, and aggregate functions to generate more meaningful insights from interconnected data.
+Although actual data is not required for execution, you should rely on the established database structure and apply your SQL knowledge to construct accurate queries.
 
-For this activity you will not need the actual data in the table. However, you should apply your understanding of queries and the structure of the table in our scenario to execute the queries.
+### Expanded Functional Goals
+
+SmartShop now needs to:
+
+- Monitor product sales by store and date
+- Identify suppliers with frequent delivery delays
+- Calculate revenue and performance metrics
+- Analyse stock levels across different store locations
 
 ---
-## Step 1: Write multi-table JOIN queries with Copilot
+## Step 1: Write Multi-Table JOIN Queries with Copilot
 
-To get started, you’ll use Copilot to generate multi-table JOIN queries.
-
-- Use Copilot to write the query to join the Products, Sales, and Suppliers tables.
-- Write a query to display:
-    - ProductName, SaleDate, StoreLocation, and UnitsSold.
+Begin by generating JOIN queries that connect related tables within the SmartShop database.
+- Create a query joining the **Products**, **Sales**, and **Suppliers** tables.
+- Display key sales details including:
+    - ProductName
+    - SaleDate
+    - StoreLocation
+    - UnitsSold
 
 #### (Query 2.1.1) Join Products, Sales, and Suppliers:
 
@@ -53,18 +62,18 @@ JOIN Sales s
 ```
 
 ---
-## Step 2: Implement nested queries and aggregation
+## Step 2: Implement Nested Queries and Aggregation
 
-Next, you’ll implement nested queries and aggregation.
+This section introduces subqueries and aggregate functions to produce summary-level insights.
+Use Copilot to construct queries that:
 
-- Write subqueries with Copilot to:
-    - Calculate total sales for each product.
-    - Identify suppliers with the most delayed deliveries.
-- Use aggregate functions (e.g., SUM, AVG, MAX) to analyse trends and summarise data.
+- Compute total sales per product
+- Detect suppliers with the highest number of delayed deliveries
+- Apply aggregate functions such as **SUM, AVG, MAX, and COUNT** to summarise performance
 
 #### (Query 2.2.1) Calculate Total Sales for Each Product:
 
-```sql
+```
 SELECT 
     p.ProductName,
     (
@@ -77,7 +86,7 @@ FROM Products p;
 
 #### (Query 2.2.2) Count delays per supplier (subquery):
 
-```sql
+```
 SELECT 
     sup.SupplierName,
     (
@@ -89,7 +98,7 @@ SELECT
 FROM Suppliers sup;
 ```
 
-#### (Query 2.2.3) Identify the supplier(s) with the **maximum** delays:
+#### (Query 2.2.3) Identify the supplier(s) with the maximum delays:
 
 ```sql
 SELECT SupplierName, DelayedDeliveries
@@ -147,7 +156,3 @@ SELECT
 FROM Inventory
 GROUP BY ProductID;
 ```
-
-
-
-

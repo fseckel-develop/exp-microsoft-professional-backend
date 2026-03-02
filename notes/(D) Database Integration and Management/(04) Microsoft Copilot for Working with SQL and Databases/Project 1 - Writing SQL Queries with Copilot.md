@@ -1,28 +1,38 @@
+## Project Stage Overview
 
-To begin, review the following scenario related to building the "SmartShop Inventory System."
+In this scenario, you are acting as a database engineer responsible for designing the **SmartShop Inventory System**, a retail inventory database for a fictional company called SmartShop.
 
-Imagine you are a database engineer tasked with developing the **SmartShop Inventory System** for a fictional retail company, SmartShop. This system must manage inventory data across multiple stores, providing real-time insights into stock levels, sales trends, and supplier information. The company requires:
+The system must support multiple store locations and provide accurate, real-time visibility into:
 
-1. A database to store and retrieve inventory data efficiently.
-2. Complex queries to analyse trends and relationships between products, sales, and suppliers.
-3. Optimised database operations to ensure high performance and scalability.
+- Current stock levels
+- Product performance and sales patterns
+- Supplier-related data
 
-Your goal is to leverage Microsoft Copilot to create, debug, and optimise SQL queries, ensuring the system meets performance and accuracy requirements. This project will span three activities and culminate in a comprehensive inventory management database.
+To meet business expectations, the solution must:
 
+- Store and retrieve inventory records efficiently
+- Support advanced SQL queries for analysing relationships between products and stock
+- Maintain strong performance and scalability as data grows
 
-SmartShop’s initial requirements include:
+Throughout this project, Microsoft Copilot will be used to assist in generating, refining, and optimising SQL queries. The work is structured into three activities that will gradually build a complete inventory database system.
 
-- Retrieving product details such as name, price, and stock levels.
-- Filtering products based on categories and availability.
-- Sorting data for better readability.
+### Core Functional Requirements
+
+SmartShop initially requires the ability to:
+
+- Display essential product information (name, category, price, stock levels)
+- Filter products by category or availability
+- Organise results for clearer readability
 
 ---
-## Step 1: Generate basic SELECT queries with Copilot
+## Step 1: Generate Basic SELECT Queries with Copilot
 
-To get started, you’ll use Copilot to generate basic queries to meet these needs.
+The first task is to use Copilot to produce foundational SELECT statements that retrieve product information from the database. Create a query that returns:
 
-- Use Copilot to write a query to retrieve product details, including:
-    - ProductName, Category, Price, and StockLevel.
+- ProductName
+- Category
+- Price
+- StockLevel
 
 #### (Query 1.1.1) Retrieving Product Information:
 
@@ -38,12 +48,12 @@ FROM Products;
 ---
 ## Step 2: Implementation of Filtering and Sorting
 
-Next, you’ll work on filtering and sorting capabilities. 
+The next phase introduces filtering and ordering operations to refine results.
+Using Copilot, generate queries that:
 
-- Write queries with Copilot to filter:
-    - Products in a specific category
-    - Products with low stock levels
-- Add sorting to display products by Price in ascending order.
+- Display products belonging to a chosen category
+- Identify items with low stock
+- Sort results by Price in ascending order
 
 #### (Query 1.2.1) Filter Products in a Specific Category:
 

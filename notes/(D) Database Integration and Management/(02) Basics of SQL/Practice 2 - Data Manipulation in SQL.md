@@ -1,41 +1,40 @@
 ## Step 1: Configure the Database Structure
 
 ```sql
-CREATE DATABASE EmployeeDB;
-USE EmployeeDB;
+CREATE DATABASE StoreDB;
+USE StoreDB;
 ```
 
 ```sql
-CREATE TABLE Employees (
+CREATE TABLE Products (
     ID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    Department VARCHAR(50),
-    Salary DECIMAL(10,2),
-    YearsExperience INT
+    ProductName VARCHAR(50),
+    Category VARCHAR(50),
+    Brand VARCHAR(50),
+    Price DECIMAL(10,2),
+    StockQuantity INT
 );
 ```
 
 ```sql
-INSERT INTO Employees 
-	(FirstName, LastName, Department, Salary, YearsExperience) 
+INSERT INTO Products 
+	(ProductName, Category, Brand, Price, StockQuantity) 
 VALUES
-	('John', 'Doe', 'HR', 60000, 10),
-	('Jane', 'Smith', 'Finance', 70000, 8),
-	('Michael', 'Brown', 'IT', 50000, 5),
-	('Emily', 'Davis', 'HR', 45000, 2),
-	('Chris', 'Wilson', 'Finance', 80000, 15);
+	('Laptop X1', 'Electronics', 'TechPro', 1200.00, 15),
+	('Smartphone A5', 'Electronics', 'MobileMax', 800.00, 25),
+	('Office Chair', 'Furniture', 'ComfortLine', 150.00, 40),
+	('Desk Lamp', 'Furniture', 'BrightHome', 45.00, 60),
+	('Running Shoes', 'Sportswear', 'FastTrack', 120.00, 30);
 ```
-
 
 ---
 ## Step 2: INSERT Operation
 
 ```sql
-INSERT INTO Employees 
-	(FirstName, LastName, Department, Salary, YearsExperience) 
-VALUES 
-	('Arjun', 'Patel', 'IT', 40000, 0);
+INSERT INTO Products 
+	(ProductName, Category, Brand, Price, StockQuantity) 
+VALUES 
+	('Wireless Mouse', 'Electronics', 'TechPro', 25.00, 100);
 ```
 
 
@@ -43,9 +42,9 @@ VALUES
 ## Step 3: UPDATE Operation
 
 ```sql
-UPDATE Employees 
-	SET Salary = 58000 
-	WHERE FirstName = 'Michael' AND LastName = 'Brown';
+UPDATE Products 
+	SET Price = 55000 
+	WHERE ProductName = 'Laptop X1' AND Brand = 'TechPro';
 ```
 
 
@@ -53,8 +52,8 @@ UPDATE Employees
 ## Step 4:  DELETE Operation
 
 ```sql
-DELETE FROM Employees
-	WHERE LastName = 'Wilson';
+DELETE FROM Products
+	WHERE Brand = 'FastTrack';
 ```
 
 
@@ -64,10 +63,10 @@ DELETE FROM Employees
 (1) Updating without WHERE clause:
 
 ```sql
-UPDATE Employees 
-	SET Salary = 75000;
+UPDATE Products 
+	SET Price = 30.00;
 
--- Updates the Salary of every employee
+-- Updates the Price of every product
 ```
 
 
@@ -81,7 +80,7 @@ ROLLBACK;
 (3) Updating specifically with WHERE clause:
 
 ```sql
-UPDATE Employees 
-	SET Salary 75000
-	WHERE FirstName = 'Arjun';
+UPDATE Products 
+	SET Price = 30.00
+	WHERE ProductName = 'Wireless Mouse';
 ```

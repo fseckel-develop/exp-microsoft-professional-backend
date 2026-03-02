@@ -1,27 +1,49 @@
+## Project Stage Overview
 
-In Activity 2, you wrote complex SQL queries for SmartShop’s inventory and sales data. Some queries may have inefficiencies or errors, including:
+In Activity 2, you developed advanced SQL queries involving JOIN operations, subqueries, and aggregations. As the SmartShop database grows, some of these queries may reveal performance issues or logical inefficiencies.
 
-- Slow execution times for large datasets.
-- Incorrect JOIN or WHERE clauses causing errors.
-- Inefficient use of aggregate functions
+Common challenges may include:
 
-1. Use Copilot to identify and correct errors in:
-	- JOIN statements causing mismatched results.
-	- Nested queries with incorrect syntax.
-2. Use Copilot to suggest and implement optimisations such as:
-	- Adding appropriate indexes to frequently queried columns.
-	- Restructuring queries for improved execution plans.
-	- Reducing unnecessary computations.
-3. Finally, use Copilot to test and validate.
-	- Run the optimised queries and compare their performance with the original versions.
-	- Ensure the results are accurate and the execution time is reduced.
+- Slow query performance when handling large datasets
+- Incorrect JOIN conditions leading to duplicated or missing records
+- Subqueries that are overly complex or syntactically problematic
+- Inefficient aggregation strategies
+
+This activity focuses on improving reliability and performance using Copilot to review, correct, and optimise the SQL logic.
 
 ---
+## Objectives for This Activity
+
+#### Identify and Correct Query Issues
+
+- Use Copilot to:
+	- Fix JOIN conditions that produce mismatched or unintended results
+	- Correct nested queries with unnecessary or invalid subquery structures
+	- Simplify overly complex logic
+
+#### Implement Performance Optimisations
+
+- Use Copilot to improve execution efficiency by:
+	- Creating indexes on frequently filtered or joined columns
+	- Introducing composite indexes when filtering and sorting occur together
+	- Rewriting nested subqueries using JOINs or CTEs
+	- Reducing redundant calculations
+
+#### Validate and Compare Performance
+
+- Finally:
+	- Execute both original and optimised queries
+	- Compare execution plans and runtime performance
+	- Confirm output accuracy
+	- Ensure improved efficiency without altering business logic
+
+---
+## Query Corrections and Optimisations
+
 ### (Query 2.2.3) Correction
 
-Inside the `MAX()` you placed another full `SELECT COUNT(*)` subquery. SQL allows this, but it’s unnecessary, confusing, and some SQL engines reject it.
-
-Fix:
+In the original version, the MAX() clause contained a deeply nested SELECT COUNT(\*) expression. Although technically valid in some engines, this structure is difficult to read, computationally expensive, and potentially unsupported in stricter SQL implementations.
+The revised version separates the aggregation logic into clearer derived tables, improving readability and maintainability.
 
 ```sql
 SELECT SupplierName, DelayedDeliveries
@@ -51,13 +73,8 @@ WHERE DelayedDeliveries = (
 );
 ```
 
-This version:
-
-- Computes delayed deliveries per supplier
-- Computes the maximum delayed deliveries in a separate derived table
-- Filters to suppliers matching that maximum
-
-Even better:
+An even more efficient approach eliminates correlated subqueries entirely 
+by using JOIN + GROUP BY:
 
 ```sql
 SELECT sup.SupplierName, COUNT(*) AS DelayedDeliveries
@@ -78,11 +95,13 @@ HAVING COUNT(*) = (
 ```
 
 ---
+## Indexing Strategy and Query Improvements
+
 #### (Query 1.1.1) Retrieve Product Information
 
-(No index needed — full table scan is expected)
-
 ```sql
+-- No index needed — full table scan is expected
+
 -- Query 1.1.1
 SELECT ProductName, Category, Price, StockLevel
 FROM Products;
@@ -242,3 +261,13 @@ SELECT
 FROM Inventory
 GROUP BY ProductID;
 ```
+
+---
+## Final Validation Approach
+
+To confirm optimisation effectiveness:
+
+1. Compare execution plans (EXPLAIN or equivalent).
+2. Measure runtime before and after indexing.
+3. Confirm identical result sets.
+4. Evaluate reduced I/O scans and improved join strategies.

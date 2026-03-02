@@ -1,36 +1,34 @@
 ## Step 1: Configure the Database Structure
 
 ```sql
-CREATE DATABASE EmployeeDB;
-USE EmployeeDB;
+CREATE DATABASE StoreDB;
+USE StoreDB;
 ```
 
 ```sql
-CREATE TABLE Employees (
+CREATE TABLE Products (
     ID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    Department VARCHAR(50),
-    Salary DECIMAL(10,2),
-    HireDate DATA
+    ProductName VARCHAR(50),
+    Brand VARCHAR(50),
+    Category VARCHAR(50),
+    Price DECIMAL(10,2),
+    DateAdded DATE
 );
 ```
-
 
 ---
 ## Step 2: Inserting Data into the Users Table
 
 ```sql
-INSERT INTO Employees 
-	(FirstName, LastName, Department, Salary, YearsExperience) 
+INSERT INTO Products 
+	(ProductName, Brand, Category, Price, DateAdded) 
 VALUES
-	('John', 'Doe', 'HR', 60000, '2020-03-15'),
-	('Jane', 'Smith', 'Finance', 70000, '20219-03-15'),
-	('Michael', 'Brown', 'IT', 50000, '2020-07-22'),
-	('Emily', 'Davis', 'Marketing', 45000, '2018-10-05'),
-	('Chris', 'Wilson', 'Finance', 80000, '2018-03-29');
+	('Laptop X1', 'TechPro', 'Electronics', 1200.00, '2020-03-15'),
+	('Smartphone A5', 'MobileMax', 'Electronics', 800.00, '2019-03-15'),
+	('Office Chair', 'ComfortLine', 'Furniture', 150.00, '2020-07-22'),
+	('Desk Lamp', 'BrightHome', 'Furniture', 45.00, '2018-10-05'),
+	('Running Shoes', 'FastTrack', 'Sportswear', 120.00, '2018-03-29');
 ```
-
 
 ---
 ## Step 3: Managing Transactions and Concurrency
@@ -42,13 +40,13 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 ```sql
 START TRANSACTION;
 
-UPDATE Employees
-	SET Salary = Salary - 5000
-	WHERE Department = 'Marketing';
+UPDATE Products
+	SET Price = Price - 20
+	WHERE Category = 'Furniture';
 	
-UPDATE Employees
-	SET Salary = Salary + 5000
-	WHERE Department = 'Finance';
+UPDATE Products
+	SET Price = Price + 20
+	WHERE Category = 'Electronics';
 
 COMMIT;
 ```
@@ -57,31 +55,29 @@ COMMIT;
 UNLOCK TABLES;
 ```
 
-
 ---
 ## Step 4: Advanced SQL Query
 
 ```sql
-SELECT FirstName, LastName, Salary
-	FROM Employees
-	WHERE Salary > (
-		SELECT AVG(Salary) 
-		FROM Employees
+SELECT ProductName, Brand, Price
+	FROM Products
+	WHERE Price > (
+		SELECT AVG(Price) 
+		FROM Products
 	);
 ```
-
 
 ---
 ## Step 5: Creating a Common Table Expression (CTE)
 
 ```sql
-WITH DepartmentSalaries AS (
-	SELECT Department, 
-		SUM(Salary) AS TotalSalary
-	 FROM Employees
-	 GROUP BY Department
+WITH CategoryPricing AS (
+	SELECT Category, 
+		SUM(Price) AS TotalPrice
+	 FROM Products
+	 GROUP BY Category
 )
-SELECT * FROM DepartmentSalaries;
+SELECT * FROM CategoryPricing;
 ```
 
 ---
@@ -92,14 +88,14 @@ SELECT * FROM DepartmentSalaries;
 ```sql
 DELIMITER $$
 
-CREATE PROCEDURE AdjustSalary(
-	DepartmentName VARCHAR(50), 
-	AdjustmentAmount
+CREATE PROCEDURE AdjustPrice(
+	CategoryName VARCHAR(50), 
+	AdjustmentAmount DECIMAL(10,2)
 )
 BEGIN
-	UPDATE Employees
-		SET Salary = Salary + AdjustmentAmount
-		WHERE Department = DepartmentName;
+	UPDATE Products
+		SET Price = Price + AdjustmentAmount
+		WHERE Category = CategoryName;
 END $$ 
 DELIMITER;
 ```
@@ -109,8 +105,8 @@ DELIMITER;
 ```sql
 DELIMITER $$
 
-CREATE PROCEDURE IncreaseSalary (
-    IN deptName VARCHAR(50),
+CREATE PROCEDURE IncreasePrice (
+    IN categoryName VARCHAR(50),
     IN increment DECIMAL(10, 2)
 )
 BEGIN
@@ -119,27 +115,25 @@ BEGIN
         SET MESSAGE_TEXT = 'Increment must be positive';
     END IF;
 	
-    UPDATE Employees
-	    SET Salary = Salary + increment
-	    WHERE Department = deptName;
+    UPDATE Products
+	    SET Price = Price + increment
+	    WHERE Category = categoryName;
 	
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Department not found';
+        SET MESSAGE_TEXT = 'Category not found';
     END IF;
     
 END $$ 
 DELIMITER ;
 ```
 
-
 Calling the Stored Procedure:
 
 ```sql
-CALL IncreaseSalary('Finance', 5000); 
-SELECT * FROM Employees;
+CALL IncreasePrice('Electronics', 50); 
+SELECT * FROM Products;
 ```
-
 
 ---
 ## Step 7: Creating a SQL Function
@@ -147,47 +141,45 @@ SELECT * FROM Employees;
 #### Example 1:
 
 ```sql
-DELIMITER  $ $
+DELIMITER $$
 
-CREATE FUNCTION CalculateBonus(
-	SalaryValue DECIMAL(10, 2)
+CREATE FUNCTION CalculateDiscount(
+	PriceValue DECIMAL(10, 2)
 )
 	RETURNS DECIMAL(10, 2)
 	DETERMINISTIC
 BEGIN
-	RETURN SalaryValue * 0.10;
+	RETURN PriceValue * 0.10;
 	
 END $$
-DELIMITER;
+DELIMITER ;
 ```
 
 #### Example 2:
 
 ```sql
-DELIMITER $ $
+DELIMITER $$
 
-CREATE FUNCTION CalculateBonus (
-	salary DECIMAL(10, 2)
+CREATE FUNCTION CalculateDiscount (
+	price DECIMAL(10, 2)
 )
 	RETURNS DECIMAL(10, 2)
 	DETERMINISTIC
 BEGIN
-    IF salary <= 0 THEN
+    IF price <= 0 THEN
         SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Salary must be positive';
+        SET MESSAGE_TEXT = 'Price must be positive';
     END IF;
-    RETURN salary * 0.10;
+    RETURN price * 0.10;
     
 END $$
-DELIMITER 
+DELIMITER ;
 ```
-
 
 Calling the SQL Function:
 
 ```sql
-SELECT FirstName, LastName, 
-	CalculateBonus(Salary) AS Bonus 
-	FROM Employees;
+SELECT ProductName, Brand, 
+	CalculateDiscount(Price) AS Discount 
+	FROM Products;
 ```
-

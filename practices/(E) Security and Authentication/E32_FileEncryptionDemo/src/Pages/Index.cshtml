@@ -1,0 +1,30 @@
+﻿@page
+@model FileEncryptionDemo.Pages.IndexModel
+@{
+    ViewData["Title"] = "Encrypt / Decrypt";
+}
+
+<h2>Encrypt / Decrypt</h2>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <p style="color:red">@Model.ErrorMessage</p>
+}
+@if (!string.IsNullOrWhiteSpace(Model.ResultMessage))
+{
+    <p style="color:green">@Model.ResultMessage</p>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.OutputFileName))
+{
+    <p>
+        Output file:
+        <a href="~/processed/@Model.OutputFileName" target="_blank">@Model.OutputFileName</a>
+    </p>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" asp-for="UploadedFile" />
+    <button type="submit" asp-page-handler="Encrypt">Encrypt</button>
+    <button type="submit" asp-page-handler="Decrypt">Decrypt</button>
+</form>

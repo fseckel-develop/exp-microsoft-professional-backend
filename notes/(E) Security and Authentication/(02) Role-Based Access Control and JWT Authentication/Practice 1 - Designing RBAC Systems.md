@@ -1,3 +1,4 @@
+## Objective 
 
 Develop and articulate the architecture of **Role-Based Access Control (RBAC)** for real-world applications by:
 
@@ -7,9 +8,6 @@ Develop and articulate the architecture of **Role-Based Access Control (RBAC)** 
 
 This practice strengthens the ability to analyse application scenarios and design RBAC models tailored to real systems.
 
-
-
----
 ---
 ## Example 1: Healthcare Management System
 
@@ -22,7 +20,6 @@ A healthcare system must securely manage access for:
 - **Nurse**
 - **Patient**
 
----
 ### Step 1: Identify Roles and Responsibilities
 
 **System Admin**:
@@ -37,7 +34,6 @@ Supports doctors by recording and updating patient vitals. Does not access presc
 **Patient**:
 Views their own medical records and test results only.
 
----
 ### Step 2: Assign Permissions
 
 **System Admin**:
@@ -64,7 +60,6 @@ Views their own medical records and test results only.
 
 *Why?* Patients need transparency into their own health data without accessing others’ information.
 
----
 ### RBAC Summary Table – Healthcare System
 
 | Role         | Permissions                                                                   |
@@ -74,7 +69,6 @@ Views their own medical records and test results only.
 | Nurse        | View/update patient vitals                                                    |
 | Patient      | View personal medical records and test results                                |
 
----
 ### Design Explanation
 
 - **Role Definition**: Roles reflect real healthcare responsibilities.
@@ -84,8 +78,6 @@ Views their own medical records and test results only.
   Access is restricted to only what each role needs, reducing exposure of sensitive data.
 
 
-
----
 ---
 ## Example 2: E-Commerce Platform
 
@@ -98,7 +90,6 @@ An e-commerce platform must manage access for:
 - **Customer Service Agent**
 - **Customer**
 
----
 ### Step 1: Identify Roles and Responsibilities
 
 **Super Admin**:
@@ -113,7 +104,6 @@ Handles customer orders and communication.
 **Customer**:
 Browses products, places orders, and views personal order history.
 
----
 ### Step 2: Assign Permissions
 
 **Super Admin**:
@@ -140,7 +130,6 @@ Browses products, places orders, and views personal order history.
 
 *Why?* Customers interact only with their own data.
 
----
 ### RBAC Summary Table – E-Commerce Platform
 
 | Role                   | Permissions                                               |
@@ -150,7 +139,6 @@ Browses products, places orders, and views personal order history.
 | Customer Service Agent | View/manage orders, access customer communications         |
 | Customer               | Browse products, place orders, view personal order history |
 
----
 ### Design Explanation
 
 - **Role Definition**: Reflects core e-commerce operations.
@@ -158,8 +146,6 @@ Browses products, places orders, and views personal order history.
 - **Security Benefit**: Minimises unauthorised access and reduces breach risks.
 
 
-
----
 ---
 ## Example 3: Learning Management System (LMS)
 
@@ -172,7 +158,6 @@ An LMS must manage access for:
 - **Student**
 - **Guest**
 
----
 ### RBAC Summary Table – LMS
 
 | Role       | Permissions                                                  |
@@ -182,7 +167,6 @@ An LMS must manage access for:
 | Student    | View enrolled courses, view assignments, view grades         |
 | Guest      | View general course information only                          |
 
----
 ### Design Explanation
 
 - **Roles** reflect the LMS hierarchy.
@@ -190,8 +174,6 @@ An LMS must manage access for:
 - **Security** prevents guests and students from accessing private data.
 
 
-
----
 ---
 ## Example 4: Retail Bank System
 
@@ -204,7 +186,6 @@ A retail bank must manage access for:
 - **Auditor**
 - **Customer**
 
----
 ### RBAC Summary Table – Retail Bank
 
 | Role     | Permissions                                                 |
@@ -214,7 +195,6 @@ A retail bank must manage access for:
 | Auditor  | Review system logs and transactions (no customer details)   |
 | Customer | View own account details, view transaction history          |
 
----
 ### Design Explanation
 
 - **Role Definition** aligns with banking operations.

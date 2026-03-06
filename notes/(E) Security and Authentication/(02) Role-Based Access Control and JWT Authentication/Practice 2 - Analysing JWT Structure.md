@@ -6,71 +6,59 @@
 	- Signature
 - Explain how each component contributes to secure data transmission
 
-
-
----
 ---
 ## Example 1: Basic JWT Analysis
 
-#### JWT Provided:
+### JWT Provided:
 
 >eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9. eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjE2MjM5MDIyfQ.
 >SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 
----
-## Step-by-Step Breakdown with Explanations
-
-### Analyse the Header
+### Analysis of the Header
 
 - JWTs are Base64URL-encoded and consist of three parts separated by periods (`.`)
 
 Decoded Header:
 
-	{
-		"alg": "HS256",
-		"typ": "JWT"
-	}
+```JSON
+{
+	"alg": "HS256",
+	"typ": "JWT"
+}
+```
 
 Explanation:
 
-- alg
-	- Specifies the signing algorithm (HS256 – HMAC SHA-256)
-- typ
-	- Identifies the token as a JSON Web Token
+- `alg`: Specifies the signing algorithm (HS256 – HMAC SHA-256)
+- `typ`: Identifies the token as a JSON Web Token
 - Why this matters
 	- The header tells the server how to verify the token’s signature
 
----
-### Analyse the Payload
+### Analysis of the Payload
 
 Decoded Payload:
 
-	{
-		"sub": "1234567890",
-		"name": "John Doe",
-		"role": "admin",
-		"exp": 1616239022
-	}
+```JSON
+{
+	"sub": "1234567890",
+	"name": "John Doe",
+	"role": "admin",
+	"exp": 1616239022
+}
+```
 
 Explanation:
 
-- sub
-	- Unique user identifier
-- name
-	- User’s display name
-- role
-	- Indicates administrative privileges
-- exp
-	- Expiration timestamp that limits token validity
+- `sub`: Unique user identifier
+- `name`: User’s display name
+- `role`: Indicates administrative privileges
+- `exp`: Expiration timestamp that limits token validity
 - Why this matters
 	- Payload claims are used to identify the user and determine permissions
 
----
-### Analyse the Signature
+### Analysis of the Signature
 
-Encoded Signature:
-
-	SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+Encoded Signature: `SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`
 
 Explanation:
 
@@ -78,8 +66,7 @@ Explanation:
 - Ensures token integrity
 - If any data is altered, the signature will fail validation and the token is rejected
 
----
-## Summary of Findings
+### Summary of Findings
 
 | Component | Decoded Content                                                        | Explanation                              |
 | --------- | ---------------------------------------------------------------------- | ---------------------------------------- |
@@ -87,11 +74,7 @@ Explanation:
 | Payload   | {"sub":"1234567890","name":"John Doe","role":"admin","exp":1616239022} | Contains identity, role, and expiration  |
 | Signature | SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c                            | Prevents tampering and ensures integrity |
 
-
-
 ---
----
-
 ## Example 2: E-Commerce JWT Analysis
 
 #### JWT Provided:
@@ -107,10 +90,7 @@ Explanation:
 | Header    | {"alg":"HS256","typ":"JWT"}                     | HS256 signing algorithm           |
 | Payload   | {"sub":"567890","role":"user","exp":1692230000} | User ID, role, 24-hour expiration |
 | Signature | Hx73oTzVZj5lfZlyyRcAJo3hH9M3VBB9-LD9ACBRUjk     | Prevents tampering                |
-|           |                                                 |                                   |
 
-
----
 ---
 ## Example 3: Healthcare JWT Analysis
 

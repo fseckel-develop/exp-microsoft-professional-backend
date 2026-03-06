@@ -1,17 +1,19 @@
-@E3_encryption_decryption_HostAddress = http://localhost:5097
+@BaseAddress = http://localhost:5097
+@CipherText = SznCZBO0b/kW2dd8C6Q+bUQTf9OsOCdA07IUY6VqtoQ=
 
-### Encrypt Data
-POST {{E3_encryption_decryption_HostAddress}}/encrypt
+
+### Encrypt Text
+POST {{BaseAddress}}/api/crypto/encrypt
 Content-Type: application/json
 
 {
-  "PlainText": "Hello, World!"
+  "plainText": "hello world"
 }
 
-### Decrypt Data
-POST {{E3_encryption_decryption_HostAddress}}/decrypt
+### Decrypt Text
+POST {{BaseAddress}}/api/crypto/decrypt
 Content-Type: application/json
 
 {
-  "CypherText": "cUXdajAEo/okQwUKw6ZkbA=="
+  "cipherText": "{{CipherText}}"
 }

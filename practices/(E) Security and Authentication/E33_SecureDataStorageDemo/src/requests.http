@@ -1,15 +1,41 @@
-@E3_secure_data_storage_HostAddress = http://localhost:5138
+@BaseAddress = http://localhost:5138
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsInN1YiI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwianRpIjoiMTA3OTRlYmMtYTRhNC00N2E3LWIxYWYtMGJmZmM2MTA3MWI0IiwibmJmIjoxNzcyNjU1MjIxLCJleHAiOjE3NzI2NTg4MjEsImlhdCI6MTc3MjY1NTIyMSwiaXNzIjoiU2VjdXJlQXBpIiwiYXVkIjoiU2VjdXJlQXBpVXNlcnMifQ.qsotjH92gUO0OKfq3sjIrytsqKjDnfBNOU493ZleAn8
 
-### Get all messages
-GET {{E3_secure_data_storage_HostAddress}}/messages
 
-### Get message by id
-GET {{E3_secure_data_storage_HostAddress}}/messages/1
-
-### Store a new message
-POST {{E3_secure_data_storage_HostAddress}}/messages
+### Get dev Token
+POST {{BaseAddress}}/api/auth/dev-token
 Content-Type: application/json
 
 {
-  "text": "Hello, secure world!"
+  "userId": "testuser@example.com"
 }
+
+
+### Debugging JWT 
+GET {{BaseAddress}}/debug/bearer
+Authorization: Bearer {{Token}}
+
+
+### Whoami (paste token)
+GET {{BaseAddress}}/api/auth/whoami
+Authorization: Bearer {{Token}}
+
+
+### Create message
+POST {{BaseAddress}}/api/messages
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "text": "hello encrypted world"
+}
+
+
+### List messages (metadata)
+GET {{BaseAddress}}/api/messages
+Authorization: Bearer {{Token}}
+
+
+### Get message by id (decrypted) - owner only
+GET {{BaseAddress}}/api/messages/2
+Authorization: Bearer {{Token}}

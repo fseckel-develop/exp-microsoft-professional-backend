@@ -1,0 +1,105 @@
+@BaseAddress = http://localhost:5209
+@UserToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InVzZXIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzczMjI3MTMxLCJpc3MiOiJTYWZlVmF1bHQiLCJhdWQiOiJTYWZlVmF1bHRDbGllbnRzIn0.7PGcbMRYyuOyJbaNSwSSc0vCu6P7ctVH9Y77DhxpA8I
+@AdminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbnVzZXIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW51c2VyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NzMyMjcxNDgsImlzcyI6IlNhZmVWYXVsdCIsImF1ZCI6IlNhZmVWYXVsdENsaWVudHMifQ.UtjappZYrogOPeASg9vCoSDCrAvstyouRv8aQb-ZUyw
+
+### Register normal user
+POST {{BaseAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "email": "user@example.com",
+  "password": "Password123!",
+  "role": "User"
+}
+
+### Register admin user
+POST {{BaseAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "adminuser",
+  "email": "admin@example.com",
+  "password": "Password123!",
+  "role": "Admin"
+}
+
+### Register duplicate username
+POST {{BaseAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "email": "user2@example.com",
+  "password": "Password123!",
+  "role": "User"
+}
+
+### Register invalid email
+POST {{BaseAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "bademail",
+  "email": "not-an-email",
+  "password": "Password123!",
+  "role": "User"
+}
+
+### Register invalid role
+POST {{BaseAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "stranger",
+  "email": "stranger@example.com",
+  "password": "Password123!",
+  "role": "SuperAdmin"
+}
+
+### Login as normal user
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "Password123!"
+}
+
+### Login as admin user
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "adminuser",
+  "password": "Password123!"
+}
+
+### Login with wrong password
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "WrongPassword!"
+}
+
+### Login with unknown user
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "nobody",
+  "password": "Password123!"
+}
+
+### Access admin dashboard without token
+GET {{BaseAddress}}/api/admin/dashboard
+
+### Access admin dashboard with non-admin token
+GET {{BaseAddress}}/api/admin/dashboard
+Authorization: Bearer {{UserToken}}
+
+### Access admin dashboard with admin token
+GET {{BaseAddress}}/api/admin/dashboard
+Authorization: Bearer {{AdminToken}}

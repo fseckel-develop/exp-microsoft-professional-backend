@@ -1,0 +1,22 @@
+@BaseAddress = http://localhost:5248
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImp0aSI6IjIwN2MwNjcxLTA1Y2YtNDdjNS1iODE4LTcxMjdhZGVmYzRmNSIsIm5iZiI6MTc3MjQ3ODAxOSwiZXhwIjoxNzcyNDc5ODE5LCJpc3MiOiJKd3RBdXRoRGVtbyIsImF1ZCI6Ikp3dEF1dGhEZW1vQXVkaWVuY2UifQ.DReOjyNpxCM7kSnqnnlZrAvr-5HkCz2W-oYjsz1guDM
+
+
+### Login (get token)
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+
+### WhoAmI
+GET {{BaseAddress}}/api/auth/whoami
+Authorization: Bearer {{Token}}
+
+
+### Secure Data
+GET {{BaseAddress}}/api/secure/data
+Authorization: Bearer {{Token}}

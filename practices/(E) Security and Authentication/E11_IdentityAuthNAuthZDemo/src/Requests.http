@@ -1,0 +1,182 @@
+@baseUrl = http://localhost:5150
+
+############################################################
+# A) Identity sanity check (before anything)
+############################################################
+###
+GET {{baseUrl}}/api/auth/whoami
+Accept: application/json
+
+###
+GET {{baseUrl}}/api/secure/public
+Accept: text/plain
+
+###
+GET {{baseUrl}}/api/secure/admin-area
+Accept: text/plain
+
+###
+GET {{baseUrl}}/api/secure/it-only
+Accept: text/plain
+
+
+############################################################
+# B) Register NORMAL user (MVC form)
+#    NOTE: If this returns a redirect, VS Code/Rider still usually keeps the cookie,
+#    but we’ll rely on API login anyway.
+############################################################
+###
+POST {{baseUrl}}/Account/Register
+Content-Type: application/x-www-form-urlencoded
+
+Email=user1%40example.com&Password=Password%40123&ConfirmPassword=Password%40123
+
+###
+POST {{baseUrl}}/Account/Login
+Content-Type: application/x-www-form-urlencoded
+
+Email=user1%40example.com&Password=Password%40123&RememberMe=false
+
+
+############################################################
+# C) Login NORMAL user via API (NO redirects; cookie issued)
+############################################################
+###
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: text/plain
+
+{
+  "email": "user1@example.com",
+  "password": "Password@123",
+  "rememberMe": false
+}
+
+###
+GET {{baseUrl}}/api/auth/whoami
+Accept: application/json
+
+
+############################################################
+# D) Protected APIs as NORMAL user
+#    Expected:
+#    - admin-area => 403
+#    - it-only    => 403 (until claim is added)
+############################################################
+###
+GET {{baseUrl}}/api/secure/admin-area
+Accept: text/plain
+
+###
+GET {{baseUrl}}/api/secure/it-only
+Accept: text/plain
+
+
+############################################################
+# E) Add IT claim to CURRENT user (NORMAL user)
+############################################################
+###
+POST {{baseUrl}}/api/auth/make-me-it
+Accept: text/plain
+
+###
+GET {{baseUrl}}/api/secure/it-only
+Accept: text/plain
+
+
+############################################################
+# F) Logout NORMAL user via API (NO antiforgery)
+############################################################
+###
+POST {{baseUrl}}/api/auth/logout
+Accept: text/plain
+
+###
+GET {{baseUrl}}/api/auth/whoami
+Accept: application/json
+
+
+############################################################
+# G) Login SEEDED ADMIN via API
+############################################################
+###
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: text/plain
+
+{
+  "email": "admin@example.com",
+  "password": "Admin@123",
+  "rememberMe": false
+}
+
+###
+GET {{baseUrl}}/api/auth/whoami
+Accept: application/json
+
+
+############################################################
+# H) Admin-only API (should PASS)
+############################################################
+###
+GET {{baseUrl}}/api/secure/admin-area
+Accept: text/plain
+
+
+############################################################
+# I) Roles management (MVC) - should work while admin cookie is present
+############################################################
+###
+GET {{baseUrl}}/Roles
+Accept: text/html
+
+###
+POST {{baseUrl}}/Roles/Create
+Content-Type: application/x-www-form-urlencoded
+
+roleName=Manager
+
+###
+POST {{baseUrl}}/Roles/Assign
+Content-Type: application/x-www-form-urlencoded
+
+email=user1@example.com&role=Admin
+
+
+############################################################
+# J) Logout ADMIN via API
+############################################################
+###
+POST {{baseUrl}}/api/auth/logout
+Accept: text/plain
+
+
+############################################################
+# K) Login NORMAL user again (now Admin) via API
+############################################################
+###
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: text/plain
+
+{
+  "email": "user1@example.com",
+  "password": "Password@123",
+  "rememberMe": false
+}
+
+###
+GET {{baseUrl}}/api/auth/whoami
+Accept: application/json
+
+
+############################################################
+# L) Admin-only API (now PASS)
+############################################################
+###
+GET {{baseUrl}}/api/secure/admin-area
+Accept: text/plain
+
+###
+GET {{baseUrl}}/Roles
+Accept: text/html

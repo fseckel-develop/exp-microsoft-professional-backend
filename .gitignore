@@ -46,6 +46,7 @@ practices/**/.idea/
 
 practices/**/appsettings.Development.json
 practices/**/appsettings.Local.json
+practices/**/appsettings.json
 practices/**/secrets.json
 practices/**/.env
 capstone/**/appsettings.Development.json

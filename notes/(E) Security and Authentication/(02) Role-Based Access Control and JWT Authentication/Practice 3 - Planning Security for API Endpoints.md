@@ -7,26 +7,6 @@
 	- Reasons for applying restrictions
 
 ---
-## Core Security Concepts
-
-- JWT validation:
-	- Ensures only authenticated users access protected routes
-- Role-based access control (RBAC):
-	- Limits actions based on user roles
-- Claims-based authorisation:
-	- Restricts access to specific resources (e.g., user ID, patient ID)
-
----
-## Key Takeaways
-
-- JWT validation is essential for protecting sensitive API routes
-- Roles limit what actions users can perform
-- Claims enforce fine-grained, resource-level access
-- Combining JWTs, roles, and claims creates secure and scalable APIs
-
-
----
----
 ## Example 1: Medical Records System
 
 ### Scenario Overview
@@ -37,7 +17,6 @@
 	- PUT /patients/{id}
 	- GET /reports
 
----
 ### Route Security Planning
 
 - GET /patients/{id}
@@ -61,18 +40,14 @@
 	- Claims:
 		- None
 
----
 ### Rationale for Restrictions
 
 - Patient data is highly sensitive and must be protected
 - Role separation prevents unauthorized actions:
 	- Nurses can view but not modify records
 	- Doctors can update patient information
-- Claims ensure users only access records they are authorized to view or modify
+- Claims ensure users only access records they are authorised to view or modify
 
-
-
----
 ---
 ## Example 2: E-Commerce Platform
 
@@ -84,7 +59,6 @@
 	- POST /orders
 	- GET /orders/{id}
 
----
 ### Route Security Planning
 
 - GET /products
@@ -103,16 +77,12 @@
 	- Claims:
 		- Must include order ID
 
----
 ### Rationale for Restrictions
 
 - Public product listings improve usability
 - Authentication prevents fraudulent order creation
 - Claims ensure users can only view their own orders
 
-
-
----
 ---
 ## Example 3: Social Media Platform
 
@@ -122,7 +92,6 @@
 - POST /posts
 - DELETE /posts/{id}
 
----
 ### Security Plan Summary
 
 - GET /users/{id}
@@ -144,9 +113,6 @@
 	- Claims:
 		- Must include user ID and post ID
 
-
-
----
 ---
 ## Example 4: Learning Management System (LMS)
 
@@ -156,7 +122,6 @@
 - POST /assignments
 - GET /grades/{id}
 
----
 ### Security Plan Summary
 
 - GET /courses
@@ -176,3 +141,21 @@
 	- Claims:
 		- Students: must include student ID
 		- Instructors: must include course ID
+
+---
+## Core Security Concepts
+
+- JWT validation:
+	- Ensures only authenticated users access protected routes
+- Role-based access control (RBAC):
+	- Limits actions based on user roles
+- Claims-based authorisation:
+	- Restricts access to specific resources (e.g., user ID, patient ID)
+
+---
+## Key Takeaways
+
+- JWT validation is essential for protecting sensitive API routes
+- Roles limit what actions users can perform
+- Claims enforce fine-grained, resource-level access
+- Combining JWTs, roles, and claims creates secure and scalable APIs

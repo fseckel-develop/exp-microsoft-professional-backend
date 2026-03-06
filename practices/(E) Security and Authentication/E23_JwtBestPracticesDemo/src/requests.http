@@ -1,0 +1,58 @@
+@BaseAddress = http://localhost:5253
+@AdminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwianRpIjoiMDRjNDNkMDQtYTMzOS00YzJiLTlhZGUtMDkwOWU3ZjdkYWU3IiwibmJmIjoxNzcyNDk4NjcxLCJleHAiOjE3NzI0OTg3OTEsImlzcyI6Ikp3dEJlc3RQcmFjdGljZXNEZW1vIiwiYXVkIjoiSnd0QmVzdFByYWN0aWNlc0RlbW8ifQ.752e29Ig05xgUAccLjcMs6OirXr0CfNfRDCno4O91Cw
+@AdminRefreshToken = 7fvcSZT6x_2noGmZukWU3qLh5RoLVZrXwohNsmxkd1s
+@UserToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InVzZXIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwianRpIjoiMDhkZjM3NjUtZTAxMi00NWQ3LWI3OTEtMzg2OTUwZDliMzUwIiwibmJmIjoxNzcyNDk4NjkzLCJleHAiOjE3NzI0OTg4MTMsImlzcyI6Ikp3dEJlc3RQcmFjdGljZXNEZW1vIiwiYXVkIjoiSnd0QmVzdFByYWN0aWNlc0RlbW8ifQ.Z4NRUKvEM4PfvP0vXVtVWGMRctAYb-LcXXfK1qmvIls
+
+
+### Login as admin
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### Admin endpoint (paste token to use)
+GET {{BaseAddress}}/api/values/admin
+Authorization: Bearer {{AdminToken}}
+
+
+### User endpoint should fail for admin? (it will fail unless you treat Admin as User too)
+GET {{BaseAddress}}/api/values/user
+Authorization: Bearer {{AdminToken}}
+
+
+### WhoAmI
+GET {{BaseAddress}}/api/auth/whoami
+Authorization: Bearer {{AdminToken}}
+
+
+### Refresh (paste refresh token to use)
+POST {{BaseAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{AdminRefreshToken}}"
+}
+
+
+### Login as user
+POST {{BaseAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+
+### User endpoint (paste token)
+GET {{BaseAddress}}/api/values/user
+Authorization: Bearer {{UserToken}}
+
+
+### Admin endpoint should fail for user
+GET {{BaseAddress}}/api/values/admin
+Authorization: Bearer {{UserToken}}

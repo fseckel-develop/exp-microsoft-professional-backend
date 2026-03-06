@@ -1,0 +1,48 @@
+@CatalogApi1 = http://localhost:5001
+@CatalogApi2 = http://localhost:5002
+
+
+##########
+# Backend instance 1
+##########
+
+### Root
+GET {{CatalogApi1}}/
+
+### Health
+GET {{CatalogApi1}}/health
+
+### Instance info
+GET {{CatalogApi1}}/api/instance
+
+### All products
+GET {{CatalogApi1}}/api/products
+
+### Product by id
+GET {{CatalogApi1}}/api/products/1
+
+### Request diagnostics
+GET {{CatalogApi1}}/api/diagnostics/request-info
+
+
+##########
+# Backend instance 2
+##########
+
+### Root
+GET {{CatalogApi2}}/
+
+### Health
+GET {{CatalogApi2}}/health
+
+### Instance info
+GET {{CatalogApi2}}/api/instance
+
+### All products
+GET {{CatalogApi2}}/api/products
+
+### Product by id
+GET {{CatalogApi2}}/api/products/1
+
+### Request diagnostics
+GET {{CatalogApi2}}/api/diagnostics/request-info

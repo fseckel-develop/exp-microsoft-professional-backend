@@ -1,11 +1,9 @@
-## Objective
+## Overview
 
 - Learners analyse different datasets and select appropriate cache expiration strategies
 - Decisions are justified based on data characteristics, performance impact, and consistency requirements
 - Focus on balancing security, accuracy, and efficiency in caching
 
-
----
 ---
 ## Example 1: Expiration Policies for an Online Retail System
 
@@ -18,7 +16,6 @@
 	- Inconsistent shopping cart behaviour
 - Appropriate expiration strategies are required based on data volatility and importance
 
----
 ### Step 1: Data Types and Their Characteristics
 
 - User Sessions
@@ -32,7 +29,6 @@
 	- Highly time-sensitive
 	- Must disappear immediately after the promotion ends
 
----
 ### Step 2: Choice of Expiration Strategy
 
 - User Sessions
@@ -51,7 +47,6 @@
 		- Automatically removes discounts at a fixed end time
 		- Prevents expired promotions from being applied
 
----
 ### Step 3: Why These Expiration Policies Work
 
 - Sliding Expiration ensures active users remain logged in without frequent reauthentication
@@ -62,9 +57,6 @@
 	- Reduces unnecessary database queries
 	- Maintains performance without sacrificing accuracy
 
-
-
----
 ---
 ## Example 2: Expiration Policies for a Banking System
 
@@ -77,7 +69,6 @@
 	- Performance degradation
 - Each dataset requires a strategy aligned with security, accuracy, and access patterns
 
----
 ### Step 1: Data Types and Their Characteristics
 
 - User Authentication Tokens
@@ -90,7 +81,6 @@
 	- Highly volatile
 	- Must always reflect the latest market values
 
----
 ### Step 2: Choice of Expiration Strategy
 
 - User Authentication Tokens
@@ -109,7 +99,6 @@
 		- Cache updates immediately when new rates are available
 		- Prevents users from seeing outdated conversion values
 
----
 ### Step 3: Why These Expiration Policies Work
 
 - Absolute Expiration enhances security for authentication tokens

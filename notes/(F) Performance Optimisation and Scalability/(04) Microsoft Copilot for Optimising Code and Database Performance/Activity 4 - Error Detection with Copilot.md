@@ -10,13 +10,10 @@ Using Microsoft Copilot, developers can quickly identify, diagnose, and fix comm
 
 **Goal:** Use Copilot to detect issues, apply suggested fixes, and verify improved app stability.
 
-
-
 ---
----
-# Example 1: Fixing a Null Reference Error in C#
+## Example 1: Fixing a Null Reference Error in C#
 
-## Scenario
+### Scenario
 
 A developer writes the following C# code but encounters a `NullReferenceException` when running it:
 
@@ -26,19 +23,16 @@ string message = null;
 Console.WriteLine(message.Length);  // This will trigger a NullReferenceException
 ```
 
----
-## Step-by-Step Debugging Process with Copilot
+### Step-by-Step Debugging Process with Copilot
 
-### Step 1: Error Detection
+#### Error Detection
 
-**Prompt:**  
-> "What’s wrong with this code?"
+**Prompt:**  "What’s wrong with this code?"
 
-**Copilot Response:**  
-> "This code attempts to access the Length property of a null string, causing a NullReferenceException. To prevent this, add a null check before accessing the property."
+**Copilot Response:** "This code attempts to access the Length property of a null string, causing 
+a NullReferenceException. To prevent this, add a null check before accessing the property."
 
----
-### Step 2: Suggested Fix
+#### Suggested Fix
 
 ```csharp
 string message = null;
@@ -53,43 +47,34 @@ else
 }
 ```
 
----
-### Step 3: Verification and Testing
+#### Verification and Testing
 
-**Prompt:**  
-> "How do I confirm this fix works?"
+**Prompt:** "How do I confirm this fix works?"
 
-**Simulated Copilot Response:**  
-> "Run the modified code with different values for `message` (null and non-null) to ensure it no longer crashes and displays the expected output."
+**Simulated Copilot Response:** "Run the modified code with different values for `message` 
+(null and non-null) to ensure it no longer crashes and displays the expected output."
 
 **Result:**
 - Prevents runtime crash  
 - Handles null safely  
 - Improves program stability  
 
-
-
 ---
----
-# Example 2: Fixing a Logic Flaw in a Discount Calculation
+## Example 2: Fixing a Logic Flaw in a Discount Calculation
 
-## Scenario
+### Scenario
 
 A developer writes a function that incorrectly applies a 10% discount instead of 20% for prices above $100.
 
----
-## Step-by-Step Debugging Process with Copilot
+### Step-by-Step Debugging Process with Copilot
 
-### Step 1: Error Detection
+#### Error Detection
 
-**Prompt:**  
-> "This discount logic is wrong. How can I fix it?"
+**Prompt:** "This discount logic is wrong. How can I fix it?"
 
-**Simulated Copilot Response:**  
-> "The function applies a 10% discount instead of the intended 20% for prices over $100. Modify the calculation to apply a 20% discount."
+**Simulated Copilot Response:** "The function applies a 10% discount instead of the intended 20% for prices over $100. Modify the calculation to apply a 20% discount."
 
----
-### Step 2: Suggested Fix
+#### Suggested Fix
 
 ```csharp
 static decimal ApplyDiscount(decimal price)
@@ -106,27 +91,22 @@ decimal discount = ApplyDiscount(price);
 Console.WriteLine($"Price: {price}, Discounted Price: {price - discount}");
 ```
 
----
-### Step 3: Verification and Testing
+#### Verification and Testing
 
-**Prompt:**  
-> "How do I ensure this fix is correct?"
+**Prompt:** "How do I ensure this fix is correct?"
 
-**Simulated Copilot Response:**  
-> "Test the function with multiple price values (below and above $100) to confirm that a 20% discount is applied correctly only when appropriate."
+**Simulated Copilot Response:** "Test the function with multiple price values (below and 
+above $100) to confirm that a 20% discount is applied correctly only when appropriate."
 
 **Result:**
 - Correct discount logic implemented  
 - Output matches business requirements  
 - Improved functional accuracy  
 
-
-
 ---
----
-# Example 3: Fix a Divide-By-Zero Error
+## Example 3: Fix a Divide-By-Zero Error
 
-## Scenario
+### Scenario
 
 The following code crashes when the divisor is zero:
 
@@ -138,19 +118,16 @@ int result = dividend / divisor;  // This will throw a DivideByZeroException
 Console.WriteLine($"Result: {result}");
 ```
 
----
-## Step-by-Step Debugging Process with Copilot
+### Step-by-Step Debugging Process with Copilot
 
-### Step 1: Error Detection
+#### Error Detection
 
-**Prompt:**  
-> "Why does this code crash?"
+**Prompt:** "Why does this code crash?"
 
-**Expected Copilot Response:**  
-> "The divisor is zero, causing a DivideByZeroException. Add a conditional check before performing division."
+**Expected Copilot Response:** "The divisor is zero, causing a DivideByZeroException. 
+Add a conditional check before performing division."
 
----
-### Step 2: Implement Copilot’s Suggested Fix
+#### Implement Copilot’s Suggested Fix
 
 ```csharp
 int dividend = 10;
@@ -167,21 +144,17 @@ else
 }
 ```
 
----
-### Step 3: How the Fix Improves Stability
+#### How the Fix Improves Stability
 
 - Prevents `DivideByZeroException`
 - Ensures safe mathematical operations
 - Provides clear user feedback instead of crashing
 - Makes the program more robust in edge cases
 
-
-
 ---
----
-# Example 4: Fix a File Handling Error
+## Example 4: Fix a File Handling Error
 
-## Scenario
+### Scenario
 
 The following code may crash if the file does not exist:
 
@@ -191,19 +164,15 @@ string content = File.ReadAllText("data.txt");
 Console.WriteLine(content);
 ```
 
----
-## Step-by-Step Debugging Process with Copilot
+### Step-by-Step Debugging Process with Copilot
 
-### Step 1: Error Detection
+#### Error Detection
 
-**Prompt:**  
-> "What potential issue exists in this file-reading code?"
+**Prompt:** "What potential issue exists in this file-reading code?"
 
-**Expected Copilot Response:**  
-> "If the file does not exist, File.ReadAllText will throw a FileNotFoundException. Add error handling."
+**Expected Copilot Response:** "If the file does not exist, File.ReadAllText will throw a FileNotFoundException. Add error handling."
 
----
-### Step 2: Implement Copilot’s Suggested Fix (Option 1 – Try-Catch)
+#### Suggested Fix (Option 1 – Try-Catch)
 
 ```csharp
 try
@@ -217,8 +186,7 @@ catch (Exception ex)
 }
 ```
 
----
-### Step 3: Alternative Fix (Using File.Exists)
+#### Alternative Fix (Using File.Exists)
 
 ```csharp
 if (File.Exists("data.txt"))
@@ -232,8 +200,7 @@ else
 }
 ```
 
----
-### Step 4: Why the Fix Is Necessary
+#### Why the Fix Is Necessary
 
 - Prevents application crashes
 - Provides meaningful error messages

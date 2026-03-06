@@ -1,11 +1,9 @@
 ## Objective
 
-- analyse query patterns to design effective indexing strategies
-- distinguish between clustered and non-clustered indexes
-- justify indexing decisions based on performance, storage, and maintenance trade-offs
+- Analyse query patterns to design effective indexing strategies
+- Distinguish between clustered and non-clustered indexes
+- Justify indexing decisions based on performance, storage, and maintenance trade-offs
 
-
----
 ---
 ## Example 1: Indexing Strategy for a Customer Orders Database
 
@@ -15,7 +13,6 @@
 - Relational database with an `orders` table
 - Performance optimisation focuses on frequent query patterns
 
----
 ## Step 1: Understanding Query Patterns
 
 ### Commonly executed queries
@@ -42,13 +39,12 @@ SELECT * FROM orders
 	WHERE total_price > 100;
 ```
 
-### Identified problems
+### Identified Problems
 
 - Filtering and sorting without indexes causes full table scans
 - Performance degrades as the orders table grows
 - Range queries become expensive on large datasets
 
----
 ## Step 2: Selecting the Best Indexes
 
 - customer_id
@@ -64,7 +60,6 @@ SELECT * FROM orders
 	- Non-clustered index
 	- Supports efficient range queries
 
----
 ## Step 3: Why These Indexes Work
 
 - Non-clustered index on `customer_id`
@@ -76,19 +71,15 @@ SELECT * FROM orders
 - Non-clustered index on `total_price`
 	- Accelerates price-based searches without changing table order
 
-
-
 ---
----
-## Example: Indexing Strategy for a Product Catalog Database
+## Example 2: Indexing Strategy for a Product Catalog Database
 
-## Scenario: Optimising Indexing for a Product Catalog
+## Scenario:
 
 - Small business managing product data
 - Queries frequently filter by category, price range, and stock level
 - Goal is to reduce scan time and improve read performance
 
----
 ## Step 1: Understanding Query Patterns
 
 ### Commonly executed queries
@@ -119,7 +110,6 @@ SELECT * FROM products
 - Frequent filtering leads to repeated full table scans
 - Performance slows as the product catalog grows
 
----
 ## Step 2: Best Indexes for the Product Catalog
 
 - category
@@ -132,7 +122,6 @@ SELECT * FROM products
 	- Non-clustered index
 	- Enables fast identification of low-stock items
 
----
 ## Step 3: Explanation of Indexing Strategy
 
 - Indexing improves filtering efficiency for category, price, and stock queries

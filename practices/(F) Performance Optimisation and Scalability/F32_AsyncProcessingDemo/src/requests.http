@@ -1,0 +1,55 @@
+@BaseAddress = http://localhost:5781
+@OrderId = fc237c5b-7c1e-4fc3-8193-5c9745990ad3
+
+##########
+# System
+##########
+
+### Root
+GET {{BaseAddress}}/
+
+### Health
+GET {{BaseAddress}}/health
+
+
+##########
+# Orders
+##########
+
+### Create order 1
+POST {{BaseAddress}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Alice",
+  "productName": "Wireless Mouse",
+  "quantity": 1
+}
+
+### Create order 2
+POST {{BaseAddress}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Bob",
+  "productName": "Mechanical Keyboard",
+  "quantity": 2
+}
+
+### Get all orders
+GET {{BaseAddress}}/api/orders
+
+### Get pending orders
+GET {{BaseAddress}}/api/orders/pending
+
+### Get processing orders
+GET {{BaseAddress}}/api/orders/processing
+
+### Get completed orders
+GET {{BaseAddress}}/api/orders/completed
+
+### Get one order by id
+GET {{BaseAddress}}/api/orders/{{OrderId}}
+
+### Get one order status
+GET {{BaseAddress}}/api/orders/{{OrderId}}/status

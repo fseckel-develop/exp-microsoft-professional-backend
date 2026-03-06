@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GqD6qD2ad5w=",
+  "dgSpecHash": "7HvOph0ReVg=",
   "success": true,
-  "projectFilePath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
+  "projectFilePath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
   "expectedPackageFiles": [
     "/Users/franz.seckel/.nuget/packages/microsoft.aspnetcore.openapi/10.0.0/microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
     "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.stackexchangeredis/10.0.2/microsoft.extensions.caching.stackexchangeredis.10.0.2.nupkg.sha512",

@@ -198,11 +198,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
+      "projectUniqueName": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
       "projectName": "RedisDistributedCacheDemo",
-      "projectPath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
+      "projectPath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/RedisDistributedCacheDemo.csproj",
       "packagesPath": "/Users/franz.seckel/.nuget/packages/",
-      "outputPath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/../obj/",
+      "outputPath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F12_RedisDistributedCacheDemo/src/../obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/franz.seckel/.nuget/NuGet/NuGet.Config"

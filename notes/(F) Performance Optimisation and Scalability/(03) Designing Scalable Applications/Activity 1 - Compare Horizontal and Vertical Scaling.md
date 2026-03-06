@@ -13,7 +13,6 @@
 	- Slow load times  
 	- Occasional crashes  
 
----
 ### Step 1: Evaluating the Scaling Options
 
 - **Horizontal Scaling**
@@ -36,7 +35,6 @@
 		- Expensive upgrades  
 		- Risk of downtime  
 
----
 ### Step 2: Selecting the Best Approach
 
 - Horizontal scaling chosen as the better solution  
@@ -47,9 +45,6 @@
 	- Load balancer distributes requests evenly  
 	- Improves performance and reliability  
 
-
-
----
 ---
 ## Example 2: Scaling a Video Streaming Platform
 
@@ -65,8 +60,7 @@
 	- Single high-performance server  
 	- Handles video storage, user requests, and streaming  
 
----
-## Step 1: Comparing the Scaling Options
+### Step 1: Comparing the Scaling Options
 
 - **Horizontal Scaling**
 	- Pros:
@@ -85,8 +79,7 @@
 		- Limited by hardware capacity  
 		- Cannot scale indefinitely  
 
----
-## Step 2: Best Scaling Approach
+### Step 2: Best Scaling Approach
 
 - Horizontal scaling is the better choice for the streaming platform  
 - Justification:

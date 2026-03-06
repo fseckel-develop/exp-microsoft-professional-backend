@@ -1,0 +1,32 @@
+@Gateway = http://localhost:8080
+
+
+### Gateway root
+GET {{Gateway}}/
+
+### Gateway route info
+GET {{Gateway}}/gateway/routes
+
+
+###
+# Run the following requests multiple times to observe the
+# load balancer switching between the backend instances
+###
+
+### Proxied instance request
+GET {{Gateway}}/api/instance
+
+### Proxied product request
+GET {{Gateway}}/api/products/1
+
+### Proxied products list request
+GET {{Gateway}}/api/products
+
+### Proxied diagnostics
+GET {{Gateway}}/api/diagnostics/request-info
+
+### Proxied delay
+GET {{Gateway}}/api/diagnostics/delay/1000
+
+### Proxied Health Check through Gateway
+GET {{Gateway}}/health

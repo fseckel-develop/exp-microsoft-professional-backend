@@ -22,17 +22,15 @@ foreach (var product in products){
 }
 ```
 
----
 ### Step-by-Step Process with Copilot Prompts and Responses
 
-### A. Performance Bottleneck Detection 
+#### Performance Bottleneck Detection 
 
 **Prompt:** "Identify inefficiencies in this nested loop and suggest improvements."  
 
-**Copilot Response:**  
-> "The inner loop iterates over all sales for each product, causing redundant comparisons. Instead, use ContainsKey for direct lookup to eliminate the unnecessary loop."
+**Copilot Response:**  "The inner loop iterates over all sales for each product, causing redundant comparisons. Instead, use ContainsKey for direct lookup to eliminate the unnecessary loop."
 
-**Optimized Code:**
+**Optimised Code:**
 
 ```csharp
 products.ForEach(product =>{
@@ -43,13 +41,11 @@ products.ForEach(product =>{
 });
 ```
 
----
-### B. Measuring Performance Improvement
+#### Measuring Performance Improvement
 
 **Prompt:** "How can I compare execution times before and after optimisation?"  
 
-**Copilot Response:**  
-> "Use the Stopwatch class to measure and compare execution time of both versions."
+**Copilot Response:**  "Use Stopwatch to measure and compare execution time of both versions."
 
 **Code for Execution Time Measurement:**
 
@@ -68,9 +64,6 @@ stopwatch.Stop();
 Console.WriteLine($"Execution time: {stopwatch.ElapsedMilliseconds} ms");
 ```
 
-
-
----
 ---
 ## Example 2: More efficient, scalable, maintainable Code
 
@@ -84,15 +77,13 @@ Console.WriteLine(File.ReadAllText("Log2.txt"));
 Console.WriteLine(File.ReadAllText("Log3.txt"));
 ```
 
----
 ### Step-by-Step Process with Copilot Prompts and Responses
 
-**Performance Bottleneck Detection**  
+#### Performance Bottleneck Detection 
 
 **Prompt:** "How can I make this code more efficient?"  
 
-**Copilot Response:**  
-> "Change code to loop through the files in a batch process to improve efficiency. In this case, it improves scalability and maintainability."
+**Copilot Response:** "Change code to loop through the files in a batch process to improve efficiency. In this case, it improves scalability and maintainability."
 
 **Optimised Code:**
 
@@ -103,17 +94,12 @@ foreach (var logFile in logFiles){
 }
 ```
 
----
-### Measuring Efficiency Improvement
+#### Measuring Efficiency Improvement
 
 **Prompt:** "How can I confirm the optimised code is more efficient?"  
 
-**Copilot Response:**  
-> "The performance difference may be negligible for small files, but the loop approach improves scalability and maintainability, simplifies adding/removing files, and enhances code readability."
+**Copilot Response:**  "The performance difference may be negligible for small files, but the loop approach improves scalability and maintainability, simplifies adding/removing files, and enhances code readability."
 
-
-
----
 ---
 ## Example 3: Optimise a Sorting Algorithm
 
@@ -145,7 +131,6 @@ void BubbleSort(int[] arr){
 - Measure execution time before and after optimisation.
 - Document the performance improvements.
 
----
 ### Optimised Sorting Algorithm (QuickSort)
 
 ```csharp
@@ -179,9 +164,6 @@ int Partition(int[] arr, int left, int right){
 - Before Optimisation (Bubble Sort): 120ms for 10,000 elements  
 - After Optimisation (QuickSort): 5ms for 10,000 elements
 
-
-
----
 ---
 ### Example 4: Optimise Unused Dependencies in a Web Application
 
@@ -201,8 +183,7 @@ using Newtonsoft.Json;
 - Measure execution performance before and after cleanup.
 - Explain how reducing unnecessary dependencies improves efficiency.
 
----
-### Optimized Code (Removed Unused Dependencies)
+### Optimised Code (Removed Unused Dependencies)
 
 ```csharp
 using System;

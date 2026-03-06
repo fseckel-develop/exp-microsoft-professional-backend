@@ -1,70 +1,37 @@
 using Microsoft.Extensions.Caching.Distributed;
+using RedisDistributedCacheDemo.Data;
+using RedisDistributedCacheDemo.Services;
+
+/*
+    Necessity: Redis
+    Installation on Mac:
+        1. brew install redis
+        2. redis-server (manual startup)
+           brew services start redis (as background service)
+        3. redis-cli ping 
+*/
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Redis
+builder.Services.AddControllers();
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = "localhost:6379";
     options.InstanceName = "RedisApp:";
 });
 
+builder.Services.AddSingleton<IProductRepository, DemoProductRepository>();
+builder.Services.AddSingleton<ProductService>();
+builder.Services.AddSingleton<IProductService>(sp =>
+{
+    var cache = sp.GetRequiredService<IDistributedCache>();
+    var inner = sp.GetRequiredService<ProductService>();
+    return new DistributedCachedProductService(cache, inner);
+});
+
 var app = builder.Build();
 
-
-app.MapPost("/store", async (IDistributedCache cache) =>
-{
-    string key = "product1";
-    string value = "Product: EcoBottle, Price: $15";
-    byte[] valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
-    var options = new DistributedCacheEntryOptions
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
-    };
-    await cache.SetAsync(key, valueBytes, options);
-    return Results.Ok("Data stored in Redis successfully.");
-});
-
-app.MapGet("/retrieve", async (IDistributedCache cache) =>
-{
-    string key = "product1";
-    byte[]? cachedValue = await cache.GetAsync(key);
-    if (cachedValue != null)
-    {
-        string value = System.Text.Encoding.UTF8.GetString(cachedValue);
-        return Results.Ok($"Retrieve value: {value}");
-    }
-    else
-    {
-        return Results.NotFound("The data was not found in the cache.");
-    }
-});
-
-app.MapDelete("/remove", async (IDistributedCache cache) =>
-{
-    string key = "product1";
-    byte[]? cachedValue = await cache.GetAsync(key);
-    if (cachedValue == null)
-    {
-        return Results.NotFound($"Key '{key}' not found in Redis.");
-    }
-    await cache.RemoveAsync(key);
-    return Results.Ok($"Key '{key}' removed from Redis.");
-});
-
-app.MapGet("/monitor", async (IDistributedCache cache) =>
-{
-    string key = "product1";
-    byte[]? cachedValue = await cache.GetAsync(key);
-    if (cachedValue != null)
-    {
-        return Results.Ok("Cache hit.");
-    }
-    else
-    {
-        return Results.NotFound("Cache miss.");
-    }
-});
-
+app.MapControllers();
 
 app.Run();

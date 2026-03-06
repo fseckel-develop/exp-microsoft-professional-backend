@@ -8,8 +8,6 @@
 - Apply indexing and query optimisation techniques to improve performance
 - Explain why optimised execution plans are critical for scalable applications
 
-
----
 ---
 ## Example 1: Query Execution Plan in an E-Commerce Database
 
@@ -26,6 +24,7 @@ FROM products p
 JOIN categories c ON p.category_id = c.id
 WHERE p.price < 100
 ORDER BY p.price ASC;
+
 The database generates the following query execution plan:
 Seq Scan on products p  (cost=0.00..12000.00 rows=5000 width=50)
   Filter: (price < 100)
@@ -34,7 +33,6 @@ Seq Scan on products p  (cost=0.00..12000.00 rows=5000 width=50)
 Sort  (cost=1000.00..1100.00 rows=5000 width=70)
 ```
 
----
 ### Step 1: Breaking Down the Execution Plan
 
 - Sequential Scan on products
@@ -53,7 +51,6 @@ Sort  (cost=1000.00..1100.00 rows=5000 width=70)
 	- What this plan shows:
 		- Sorting a large number of rows can become expensive
 
----
 ### Step 2: Identifying Performance Issues
 
 - Sequential Scan on products
@@ -63,7 +60,6 @@ Sort  (cost=1000.00..1100.00 rows=5000 width=70)
 - Index Scan on categories
 	- Already optimized and does not require changes
 
----
 ### Step 3: Optimizing the Query Execution Plan
 
 - Create an index on price
@@ -71,20 +67,18 @@ Sort  (cost=1000.00..1100.00 rows=5000 width=70)
 		- Avoids full table scans
 		- Speeds up filtering and sorting
 	- Implementation:
-		- CREATE INDEX price_index ON products(price);
+		- `CREATE INDEX price_index ON products(price);`
 - Use index-supported sorting
 	- Why it helps:
 		- Reduces sorting overhead
 	- Implementation:
-		- Reuse price_index for ORDER BY
-- Pagination with LIMIT and OFFSET
+		- Reuse `price_index` for `ORDER BY`
+- Pagination with `LIMIT` and `OFFSET`
 	- Why it helps:
 		- Reduces rows processed and returned
 	- Implementation:
-		- LIMIT 50 OFFSET 51
+		- `LIMIT 50 OFFSET 51`
 
-
----
 ---
 ## Example 2: Query Execution Plan for a Social Media Database
 
@@ -100,6 +94,7 @@ SELECT u.id, u.name, f.friend_id
 FROM users u
 JOIN friendships f ON u.id = f.user_id
 WHERE u.name LIKE 'A%';
+
 The execution plan shows:
 Seq Scan on users u  (cost=0.00..25000.00 rows=10000 width=50)
   Filter: (name LIKE 'A%')
@@ -108,7 +103,6 @@ Seq Scan on users u  (cost=0.00..25000.00 rows=10000 width=50)
      -> Seq Scan on friendships f (cost=0.00..5000.00 rows=20000 width=30)
 ```
 
----
 ### Step 1: Breaking Down the Execution Plan
 
 - Sequential Scan on users
@@ -127,26 +121,24 @@ Seq Scan on users u  (cost=0.00..25000.00 rows=10000 width=50)
 	- Optimised or needs improvement:
 		- Needs improvement due to lack of index
 
----
 ### Step 2: Optimising the Query Execution Plan
 
 - Create an index on users.name
 	- Why it helps:
 		- Enables fast prefix-based searches
 	- Implementation:
-		- CREATE INDEX name_index ON users(name);
+		- `CREATE INDEX name_index ON users(name);`
 - Create an index on friendships.user_id
 	- Why it helps:
 		- Speeds up join operations
 	- Implementation:
-		- CREATE INDEX user_id_index ON friendships(user_id);
-- Use B-tree index optimized for LIKE queries
+		- `CREATE INDEX user_id_index ON friendships(user_id);`
+- Use B-tree index optimised for LIKE queries
 	- Why it helps:
 		- Improves prefix matching performance
 	- Implementation:
-		- CREATE INDEX name_btree_index ON users(name text_pattern_ops);
+		- `CREATE INDEX name_btree_index ON users(name text_pattern_ops);`
 
----
 ### Step 3: Importance of Query Optimisation
 
 - Indexing reduces query execution time by avoiding full table scans

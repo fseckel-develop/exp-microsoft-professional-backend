@@ -15,7 +15,6 @@ for (let i = 0; i < data.length; i++) {
 console.log(result);  // Expected output: [4, 8]
 ````
 
----
 ### Sample Copilot Output
 
 ```javascript
@@ -26,7 +25,6 @@ const result = data
 console.log(result);  // Output: [4, 8]
 ```
 
----
 ### Step-by-Step Evaluation
 
 #### Step 1: Efficiency
@@ -50,9 +48,6 @@ console.log(result);  // Output: [4, 8]
     - The refactored code is shorter, clearer, and functionally equivalent.
     - Improves maintainability without changing behaviour.
 
-
-
----
 ---
 ## Example 2: Refactoring Repeated Database Queries
 
@@ -68,7 +63,6 @@ const user1 = await getData(1);
 const user2 = await getData(2);
 ```
 
----
 ### Sample Copilot Output
 
 ```javascript
@@ -81,7 +75,6 @@ const getUserData = async (ids) => {
 const [user1, user2] = await getUserData([1, 2]);
 ```
 
----
 ### Step-by-Step Evaluation
 
 #### Step 1: Efficiency
@@ -105,8 +98,6 @@ const [user1, user2] = await getUserData([1, 2]);
     - Improves performance through parallel execution.
     - Enhances scalability and reduces redundancy.
 
-
----
 ---
 ## Example 3: Refactoring Error Handling
 
@@ -121,7 +112,6 @@ try {
 }
 ```
 
----
 ### Sample Copilot Output
 
 ```javascript
@@ -133,7 +123,6 @@ try {
 }
 ```
 
----
 ### Step-by-Step Evaluation
 
 #### Step 1: Efficiency
@@ -157,8 +146,6 @@ try {
     - Improves debugging capability.
     - Retains original functionality while adding valuable diagnostic detail.
 
-
----
 ---
 ## Example 3: Refactoring Functions
 
@@ -174,7 +161,6 @@ function calculatePerimeter(width, height) {
 }
 ```
 
----
 ### Sample Copilot Output
 
 ```javascript
@@ -184,7 +170,6 @@ const calculateRectangle = {
 };
 ```
 
----
 ### Step-by-Step Evaluation
 
 #### Step 1: Efficiency

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj": {}
+    "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj": {}
   },
   "projects": {
-    "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj": {
+    "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
+        "projectUniqueName": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
         "projectName": "ExpirationPoliciesDemo",
-        "projectPath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
+        "projectPath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
         "packagesPath": "/Users/franz.seckel/.nuget/packages/",
-        "outputPath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/../obj/",
+        "outputPath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/../obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/franz.seckel/.nuget/NuGet/NuGet.Config"

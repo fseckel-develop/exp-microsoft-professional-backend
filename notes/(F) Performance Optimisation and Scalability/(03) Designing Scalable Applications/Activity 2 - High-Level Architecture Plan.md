@@ -10,7 +10,6 @@
 	- Caching for product data  
 	- Asynchronous background processing  
 
----
 ### Architecture Components and Explanations
 
 - **Stateless Services**
@@ -42,7 +41,6 @@
 	- Implementation:
 		- Message queues like RabbitMQ for order processing and emails  
 
----
 ### High-Level Architecture Diagram (Text-Based)
 
 - Frontend sends requests to the load balancer  
@@ -52,7 +50,6 @@
 	- Database for persistent storage  
 	- Asynchronous task queue for background jobs  
 
----
 ### Summary of Architecture Plan
 
 - **Stateless Services**
@@ -79,9 +76,6 @@
 	- Scalability Support:
 		- Maintains application responsiveness  
 
-
-
----
 ---
 ## Example 2: Learning Management System (LMS) Architecture
 
@@ -95,7 +89,6 @@
 	- Asynchronous processing  
 	- Stateless services  
 
----
 ### Architecture Components and Explanations
 
 - **Load Balancing**
@@ -121,9 +114,8 @@
 	- Why:
 		- Enables horizontal scaling during peak usage  
 	- Implementation:
-		- Containerized cloud deployments  
+		- Containerised cloud deployments  
 
----
 ### High-Level Architecture Diagram (Text-Based)
 
 - Students access the system via frontend  
@@ -133,7 +125,6 @@
 	- Database for persistence  
 	- Task queue for background processing  
 
----
 ### Summary of Architecture Plan
 
 - **Load Balancer**
@@ -160,9 +151,6 @@
 	- Scalability Support:
 		- Easy horizontal scaling  
 
-
-
----
 ---
 ## Example 3: Video Streaming Platform Architecture
 
@@ -175,7 +163,6 @@
 	- Caching for video metadata  
 	- Asynchronous tasks for recommendations and notifications  
 
----
 ### High-Level Architecture Plan
 
 - Frontend sends streaming requests to load balancer  
@@ -185,7 +172,6 @@
 	- Database for persistent data  
 	- Task queue for background processes  
 
----
 ### Scalability and Performance Support
 
 - **Stateless Services**
@@ -200,9 +186,6 @@
 - **Asynchronous Tasks**
 	- Prevents recommendation and notification processing from blocking streams  
 
-
-
----
 ---
 ## Example 4: Social Media Platform Architecture
 
@@ -216,7 +199,6 @@
 	- Caching for recent posts and profiles  
 	- Asynchronous processing for notifications and uploads  
 
----
 ### High-Level Architecture Plan
 
 - Users interact with frontend  
@@ -226,7 +208,6 @@
 	- Database for long-term storage  
 	- Task queue for media uploads and notifications  
 
----
 ### Scalability and User Experience Support
 
 - **Stateless Services**

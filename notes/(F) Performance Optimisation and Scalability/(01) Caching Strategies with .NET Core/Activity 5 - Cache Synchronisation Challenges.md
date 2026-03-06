@@ -13,7 +13,6 @@
 	- Ensure real-time synchronisation
 	- Minimise performance overhead
 
----
 ### Step 1: Identify the Synchronisation Challenges
 
 - Stale Data
@@ -32,7 +31,6 @@
 	- Example scenario
 		- Stock availability updates arrive later in some regions
 
----
 ### Step 2: Solutions to Ensure Data Consistency
 
 - Cache Expiration & Invalidation
@@ -61,9 +59,6 @@
 	- Use case
 		- Faster synchronisation across regions
 
-
-
----
 ---
 ## Example 2: Data Synchronisation Challenges in a News Platform
 
@@ -80,7 +75,6 @@
 	- Maintain accurate, synchronised data
 	- Preserve real-time user experience
 
----
 ### Step 1: Identify the Synchronisation Challenges
 
 - Stale Data
@@ -90,7 +84,7 @@
 		- Breaking news articles display outdated information
 - Cache Inconsistency
 	- Why it happens
-		- Servers synchronize trending topics at different times
+		- Servers synchronise trending topics at different times
 	- Example scenario
 		- Users in different regions see different trending stories
 - Synchronization Delays
@@ -99,7 +93,6 @@
 	- Example scenario
 		- Newly posted comments appear minutes later for other users
 
----
 ### Step 2: Solutions to Ensure Data Consistency
 
 - Cache Expiration & Invalidation
@@ -128,8 +121,7 @@
 	- Use case
 		- Trending topics update faster worldwide
 
----
-### Step 3: Impact of Poor Synchronization
+### Step 3: Impact of Poor Synchronisation
 
 - Causes inconsistent user experiences
 	- Different users see different versions of content

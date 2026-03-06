@@ -1,4 +1,4 @@
-## Objective
+## Overview
 
 - Design a Redis-based caching strategy for a high-traffic platform
 	- Focus on performance, scalability, and synchronisation
@@ -6,8 +6,6 @@
 	- Define expiration and synchronisation strategies
 - Emphasis on architectural planning rather than implementation
 
-
----
 ---
 ## Example 1: Redis Caching Strategy for Video Streaming Platform
 
@@ -23,7 +21,6 @@
 	- Reduce database queries
 	- Improve performance and scalability
 
----
 ### Step 1: Identify What to Cache and Why
 
 - User Sessions
@@ -35,7 +32,6 @@
 - Search Results
 	- Trending searches queried repeatedly
 
----
 ### Step 2: Define the Redis Caching Strategy
 
 - User Sessions
@@ -59,11 +55,10 @@
 - Search Results
 	- Performance benefits
 		- Faster responses for trending searches
-	- Expiration & synchronization
+	- Expiration & synchronisation
 		- Cached for 10 minutes
 		- Updated when new content is available
 
----
 ### Step 3: Why This Redis Caching Strategy Works
 
 - User sessions
@@ -76,15 +71,12 @@
 - Search results
 	- Short cache duration balances speed and freshness
 
----
 ### How Redis Improves Performance
 
 - Reduces database load by serving data from memory
 - Improves response times significantly
 - Enables scalability by distributing cache across servers
 
-
----
 ---
 ## Example 2: Redis Caching Strategy for E-Commerce Platform
 
@@ -102,7 +94,6 @@
 	- Design a Redis caching strategy
 	- Improve performance and scalability
 
----
 ### Step 1: Identify What to Cache and Why
 
 - Product Listings
@@ -116,7 +107,6 @@
 - Promotional Discounts
 	- Time-sensitive sales data displayed site-wide
 
----
 ### Step 2: Define the Redis Caching Strategy
 
 - Product Listings
@@ -153,7 +143,6 @@
 		- Cached for 1 day
 		- Updated when promotions change
 
----
 ### Step 3: Why This Redis Caching Strategy Works
 
 - Product listings
@@ -165,7 +154,6 @@
 - Search data and promotions
 	- Cached briefly to balance freshness and speed
 
----
 ### How Redis Improves Performance
 
 - Reduces database load by serving frequently accessed data from memory

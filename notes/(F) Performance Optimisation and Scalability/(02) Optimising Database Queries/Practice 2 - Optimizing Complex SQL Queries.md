@@ -1,46 +1,44 @@
 ## Step 1: Prepare for the Lab Environment
 
 ```sql
-CREATE DATABASE SalesDatabase;
+CREATE DATABASE UniversityDB;
 
-USE SalesDatabase;
+USE UniversityDB;
 
-CREATE TABLE Products (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    price DECIMAL(10,2)
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100),
+    credit_hours INT
 );
 
-CREATE TABLE Customers (
-    customer_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100)
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_name VARCHAR(100)
 );
 
-CREATE TABLE Orders (
-    order_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    order_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    enrollment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
 );
 
-CREATE TABLE Sales (
-    sale_id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT,
-    quantity INT,
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+CREATE TABLE Grades (
+    grade_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT,
+    score INT,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
 ```
 
 Verify the database setup:
 
 ```sql
-SELECT * FROM Products; 
-SELECT * FROM Customers; 
-SELECT * FROM Orders; 
-SELECT * FROM Sales;
+SELECT * FROM Courses; 
+SELECT * FROM Students; 
+SELECT * FROM Enrollments; 
+SELECT * FROM Grades;
 ```
-
-
 
 ---
 ## Step 2: Identifying Bottlenecks
@@ -48,13 +46,13 @@ SELECT * FROM Sales;
 Original Query:
 
 ```sql
-SELECT * FROM Products;
+SELECT * FROM Courses;
 ```
 
 Analysis:
 
 ```sql
-EXPLAIN SELECT * FROM Products;
+EXPLAIN SELECT * FROM Courses;
 
 -- If type: ALL appears in the plan, it indicates a full table scan.
 ```
@@ -62,12 +60,10 @@ EXPLAIN SELECT * FROM Products;
 Optimised Query:
 
 ```sql
-SELECT name, price FROM Products WHERE price > 100;
+SELECT course_name, credit_hours FROM Courses WHERE credit_hours > 3;
 
 -- Selecting specific columns reduces the amount of data processed.
 ```
-
-
 
 ---
 ## Step 3: Optimising Query Performance with Indexing
@@ -75,19 +71,18 @@ SELECT name, price FROM Products WHERE price > 100;
 Original Query:
 
 ```sql
-SELECT Orders.order_id, Customers.name  FROM Orders  
-	JOIN Customers ON Orders.customer_id = Customers.customer_id;
+SELECT Enrollments.enrollment_id, Students.student_name 
+FROM Enrollments  
+JOIN Students ON Enrollments.student_id = Students.student_id;
 ```
 
 Optimised Query:
 
 ```sql
-CREATE INDEX idx_customer_id ON Orders (customer_id);
+CREATE INDEX idx_student_id ON Enrollments (student_id);
 
--- Adding an index on customer_id speeds up row lookups.
+-- Adding an index on student_id speeds up row lookups.
 ```
-
-
 
 ---
 ## Step 4: Avoiding Inefficiencies in Temporary Tables
@@ -95,42 +90,41 @@ CREATE INDEX idx_customer_id ON Orders (customer_id);
 Original Query:
 
 ```sql
-CREATE TEMPORARY TABLE temp_sales AS  
-SELECT * FROM Sales WHERE quantity > 3;
+CREATE TEMPORARY TABLE temp_grades AS  
+SELECT * FROM Grades WHERE score > 70;
 
-SELECT AVG(quantity) FROM temp_sales;
+SELECT AVG(score) FROM temp_grades;
 ```
 
 Optimised Query:
 
 ```sql
-SELECT AVG(quantity) FROM Sales WHERE quantity > 3;
+SELECT AVG(score) FROM Grades WHERE score > 70;
 
 -- Eliminating the temporary table reduces 
 -- memory usage and improves execution speed.
 ```
 
-
-
 ---
-## **Step 5: Rewriting Nested Queries for Efficiency**
+## Step 5: Rewriting Nested Queries for Efficiency
 
 Original Query:
 
 ```sql
-SELECT * FROM Products  
-	WHERE product_id IN (
-		SELECT product_id FROM Sales WHERE quantity > 3
+SELECT * FROM Courses  
+	WHERE course_id IN (
+		SELECT course_id FROM Grades WHERE score > 70
 	);
 ```
 
 Optimised Query:
 
 ```sql
-SELECT Products.* FROM Products  
-	JOIN Sales ON Products.product_id = Sales.product_id  
-	WHERE Sales.quantity > 3;
-	
+SELECT Courses.* 
+FROM Courses  
+JOIN Grades ON Courses.course_id = Grades.course_id  
+WHERE Grades.score > 70;
+
 -- JOIN queries are generally faster than subqueries 
 -- as they reduce redundant executions
 ```

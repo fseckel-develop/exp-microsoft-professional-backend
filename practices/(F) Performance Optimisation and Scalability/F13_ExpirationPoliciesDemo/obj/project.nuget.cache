@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "pZoOfbbNKaI=",
+  "dgSpecHash": "AzVfuQ0gtME=",
   "success": true,
-  "projectFilePath": "/Users/franz.seckel/Repositories/skill-microsoft-professional-backend/projects/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
+  "projectFilePath": "/Users/franz.seckel/Repositories/exp-microsoft-professional-backend/practices/(F) Performance Optimisation and Scalability/F13_ExpirationPoliciesDemo/src/ExpirationPoliciesDemo.csproj",
   "expectedPackageFiles": [
     "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.abstractions/10.0.2/microsoft.extensions.caching.abstractions.10.0.2.nupkg.sha512",
     "/Users/franz.seckel/.nuget/packages/microsoft.extensions.caching.memory/10.0.2/microsoft.extensions.caching.memory.10.0.2.nupkg.sha512",

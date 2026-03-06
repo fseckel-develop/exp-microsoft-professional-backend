@@ -1,28 +1,28 @@
 ## Step 1: Prepare for the Lab Environment
 
 ```sql
-CREATE DATABASE SalesDB;
-USE SalesDB;
+CREATE DATABASE ClinicDB;
+USE ClinicDB;
 
-CREATE TABLE Orders (
-    OrderID INT AUTO_INCREMENT PRIMARY KEY,
-    OrderDate DATETIME,
-    CustomerID INT,
-    TotalAmount DECIMAL(10, 2)
+CREATE TABLE Appointments (
+    AppointmentID INT AUTO_INCREMENT PRIMARY KEY,
+    AppointmentDate DATETIME,
+    PatientID INT,
+    ConsultationFee DECIMAL(10, 2)
 );
 
 DELIMITER $$
 
-CREATE PROCEDURE PopulateOrders()
+CREATE PROCEDURE PopulateAppointments()
 BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE i <= 3000 DO
-        INSERT INTO Orders (OrderDate, CustomerID, TotalAmount)
+        INSERT INTO Appointments (AppointmentDate, PatientID, ConsultationFee)
         VALUES (
             DATE_ADD('2024-01-01', INTERVAL FLOOR(RAND() * 90) DAY), 
             -- Random date in Quarter 1 2024
-            FLOOR(RAND() * 100) + 1, -- Random CustomerID between 1 and 100
-            ROUND(RAND() * 1000, 2)  -- Random TotalAmount between 0 and 1000
+            FLOOR(RAND() * 100) + 1, -- Random PatientID between 1 and 100
+            ROUND(RAND() * 1000, 2)  -- Random ConsultationFee between 0 and 1000
         );
         SET i = i + 1;
     END WHILE;
@@ -30,16 +30,14 @@ END $$
 
 DELIMITER ;
 
-CALL PopulateOrders();
+CALL PopulateAppointments();
 ```
 
 To confirm that the data has been inserted
 
-```sql 
-SELECT COUNT(*) AS TotalRows FROM Orders;
+```sql
+SELECT COUNT(*) AS TotalRows FROM Appointments;
 ```
-
-
 
 ---
 ## Step 2: Measure Baseline Query Performance
@@ -50,12 +48,12 @@ Enable query timing by running:
 SET PROFILING = 1;
 ```
 
-Execute the following query and measure its execution time 
+Execute the following query and measure its execution time
 
 ```sql
-SELECT * FROM Orders  
-	WHERE OrderDate BETWEEN '2024-02-01' AND '2024-02-15'
-	AND TotalAmount > 500;
+SELECT * FROM Appointments  
+	WHERE AppointmentDate BETWEEN '2024-02-01' AND '2024-02-15'
+	AND ConsultationFee > 500;
 ```
 
 View the profiling information by running:
@@ -64,40 +62,36 @@ View the profiling information by running:
 SHOW PROFILES;
 ```
 
-
-
 ---
 ## Step 3: Create Indexes
 
-Create a single-column index on the OrderDate column:
+Create a single-column index on the AppointmentDate column:
 
 ```sql
-CREATE INDEX idx_order_date ON Orders(OrderDate);
+CREATE INDEX idx_appointment_date ON Appointments(AppointmentDate);
 ```
 
-Create another single-column index on the CustomerID column:
+Create another single-column index on the PatientID column:
 
 ```sql
-CREATE INDEX idx_customer_id ON Orders(CustomerID);
+CREATE INDEX idx_patient_id ON Appointments(PatientID);
 ```
 
 Verify the indexes were created by running:
 
 ```sql
-SHOW INDEX FROM Orders;
+SHOW INDEX FROM Appointments;
 ```
-
-
 
 ---
 ## Step 4: Measure Query Performance After Indexing
 
-Rerun the same query from Step 2: 
+Rerun the same query from Step 2:
 
 ```sql
-SELECT * FROM Orders  
-	WHERE OrderDate BETWEEN '2024-02-01' AND '2024-02-15'   
-	AND TotalAmount > 500;
+SELECT * FROM Appointments  
+	WHERE AppointmentDate BETWEEN '2024-02-01' AND '2024-02-15'  
+	AND ConsultationFee > 500;
 ```
 
 View the profiling information again using:
@@ -106,10 +100,8 @@ View the profiling information again using:
 SHOW PROFILES;
 ```
 
-Note the updated execution time and compare it to the baseline. 
-It should show some improvement
-
-
+Note the updated execution time and compare it to the baseline.
+It should show some improvement.
 
 ---
 ## Step 5: Analyse Query Execution Plans
@@ -117,40 +109,38 @@ It should show some improvement
 Use the EXPLAIN command to analyse the query:
 
 ```sql
-EXPLAIN SELECT * FROM Orders  
-	WHERE OrderDate BETWEEN '2024-02-01' AND '2024-02-15'   
-	AND TotalAmount > 500;
+EXPLAIN SELECT * FROM Appointments  
+	WHERE AppointmentDate BETWEEN '2024-02-01' AND '2024-02-15'  
+	AND ConsultationFee > 500;
 ```
-
-
 
 ---
-## **Step 6: Experiment with Composite Indexes**
+## Step 6: Experiment with Composite Indexes
 
-Drop the existing single-column index on CustomerID:
+Drop the existing single-column index on PatientID:
 
 ```sql
-DROP INDEX idx_customer_id ON Orders;
+DROP INDEX idx_patient_id ON Appointments;
 ```
 
-Create a composite index on OrderDate and TotalAmount:
+Create a composite index on AppointmentDate and ConsultationFee:
 
 ```sql
-CREATE INDEX idx_order_date_total ON Orders(OrderDate, TotalAmount);
+CREATE INDEX idx_appointment_date_fee ON Appointments(AppointmentDate, ConsultationFee);
 ```
 
 Rerun the query from Step 2 and measure the execution time again:
 
 ```sql
-SELECT * FROM Orders  
-	WHERE OrderDate BETWEEN '2024-02-01' AND '2024-02-15'   
-	AND TotalAmount > 500;
+SELECT * FROM Appointments  
+	WHERE AppointmentDate BETWEEN '2024-02-01' AND '2024-02-15'  
+	AND ConsultationFee > 500;
 ```
 
 Use the EXPLAIN command to confirm that the composite index is being used:
 
 ```sql
-EXPLAIN SELECT * FROM Orders  
-	WHERE OrderDate BETWEEN '2024-02-01' AND '2024-02-15'   
-	AND TotalAmount > 500;
+EXPLAIN SELECT * FROM Appointments  
+	WHERE AppointmentDate BETWEEN '2024-02-01' AND '2024-02-15'  
+	AND ConsultationFee > 500;
 ```

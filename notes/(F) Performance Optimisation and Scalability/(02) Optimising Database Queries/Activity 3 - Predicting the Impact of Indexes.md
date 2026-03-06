@@ -1,12 +1,10 @@
 ## Objective
 
-- analyse how clustered and non-clustered indexes affect query performance
-- identify performance bottlenecks in SQL queries 
-- predict how different indexing strategies improve filtering and sorting efficiency
-- consider potential trade-offs
+- Analyse how clustered and non-clustered indexes affect query performance
+- Identify performance bottlenecks in SQL queries 
+- Predict how different indexing strategies improve filtering and sorting efficiency
+- Consider potential trade-offs
 
-
----
 ---
 ## Example 1: Impact of Indexing on a Customer Orders Query
 
@@ -16,7 +14,6 @@
 - Frequently executed query retrieves customer orders by date
 - Query filters by customer and sorts by order date
 
----
 ## Step 1: Identifying Performance Bottlenecks
 
 - Query behaviour
@@ -27,7 +24,6 @@
 	- Sorting requires additional processing time
 	- Performance degrades as table size grows
 
----
 ## Step 2: Predicting the Impact of Indexing
 
 - Clustered Index on `order_date`
@@ -40,20 +36,16 @@
 	- Filtering and sorting are both optimised
 	- Query execution becomes significantly faster
 
-
-
----
 ---
 ## Example 2: Impact of Indexing on a Product Database
 
-## Scenario: Optimising Product Searches
+## Scenario
 
 - E-commerce platform manages a product catalog
 - Query retrieves products within a price range
 - Results are sorted alphabetically by product name
 
----
-## Task 1: Predicted Impact of Indexing
+## Task 1: Predicting the Impact of Indexing
 
 - Clustered Index on `name`
 	- Products are physically stored in name order

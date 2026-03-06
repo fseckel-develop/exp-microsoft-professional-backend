@@ -5,8 +5,6 @@
 - Recommend appropriate optimisations based on execution behaviour
 - Explain the importance of query optimisation for performance and scalability
 
-
----
 ---
 ## Example 1: Identifying Bottlenecks in an E-Commerce Query
 
@@ -28,7 +26,6 @@ Seq Scan on products  (cost=0.00..15000.00 rows=5000 width=100)
 Sort  (cost=500.00..600.00 rows=5000 width=100)
 ```
 
----
 ### Step 1: Identifying Performance Bottlenecks
 
 - Sequential Scan on products
@@ -41,7 +38,6 @@ Sort  (cost=500.00..600.00 rows=5000 width=100)
 	- Sorts thousands of rows
 	- Adds extra execution time
 
----
 ### Step 2: Recommended Optimisations
 
 - Create an index on category
@@ -56,9 +52,6 @@ Sort  (cost=500.00..600.00 rows=5000 width=100)
 	- Reduces number of rows returned
 	- Improves response time for large result sets
 
-
-
----
 ---
 ## Example 2: Identifying Bottlenecks in a Social Media Query
 
@@ -78,7 +71,6 @@ Seq Scan on users  (cost=0.00..20000.00 rows=10000 width=150)
   Filter: (city = 'New York')
 ```
 
----
 ### Step 1: Identifying Performance Bottlenecks
 
 - Sequential Scan on users
@@ -86,7 +78,6 @@ Seq Scan on users  (cost=0.00..20000.00 rows=10000 width=150)
 	- Causes slow performance due to full table scanning
 	- Indicates missing index on city column
 
----
 ### Step 2: Recommended Optimisations
 
 - Create an index on city
@@ -98,7 +89,6 @@ Seq Scan on users  (cost=0.00..20000.00 rows=10000 width=150)
 	- Implementation:
 		- CREATE INDEX city_name_idx ON users(city, name);
 
----
 ### Step 3: Why Query Optimisation Matters
 
 - Reducing full table scans significantly speeds up query execution

@@ -1,4 +1,4 @@
-## 1. Scenario Overview
+## Scenario Overview
 
 WarehouseX is experiencing performance bottlenecks when retrieving product and order sales data. Queries involving the `Products` and `Orders` tables are slow, contributing to delays in order processing and reporting.
 
@@ -15,53 +15,53 @@ ORDER BY TotalSold DESC;
 
 ### Objectives
 
--	Identify inefficiencies using Copilot  
--	Apply indexing and restructuring strategies  
--	Compare execution plans before and after optimisation  
+- Identify inefficiencies using Copilot  
+- Apply indexing and restructuring strategies  
+- Compare execution plans before and after optimisation  
 
 ---
-## 2. Query Analysis with Copilot
+## Query Analysis with Copilot
 
 ### Detect Potential Inefficiencies
 
 Using Copilot query analysis, the following areas are flagged:
 
--	Filtering on `p.Category` without confirming an index exists  
--	Joining on `ProductID` without verifying proper indexing  
--	Aggregation (`SUM` + `GROUP BY`) on potentially large datasets  
--	Sorting (`ORDER BY TotalSold DESC`) on computed values  
+- Filtering on `p.Category` without confirming an index exists  
+- Joining on `ProductID` without verifying proper indexing  
+- Aggregation (`SUM` + `GROUP BY`) on potentially large datasets  
+- Sorting (`ORDER BY TotalSold DESC`) on computed values  
 
 ### Identified Performance Risks
 
--	Full table scan on `Products` if `Category` is not indexed  
--	High I/O cost when scanning large `Orders` table  
--	Expensive grouping operation if no supporting index exists  
--	Sort operation on aggregated results  
+- Full table scan on `Products` if `Category` is not indexed  
+- High I/O cost when scanning large `Orders` table  
+- Expensive grouping operation if no supporting index exists  
+- Sort operation on aggregated results  
 
 ---
-## 3. Execution Plan (Before Optimisation)
+## Execution Plan (Before Optimisation)
 
 Expected execution characteristics:
 
--	Table scan on `Products` (if no index on `Category`)  
--	Scan or clustered index scan on `Orders`  
--	Hash match or sort for aggregation  
--	Explicit sort operator for `ORDER BY`  
+- Table scan on `Products` (if no index on `Category`)  
+- Scan or clustered index scan on `Orders`  
+- Hash match or sort for aggregation  
+- Explicit sort operator for `ORDER BY`  
 
 ### Observed Issues
 
--	High logical reads  
--	Increased CPU usage during aggregation  
--	Longer execution time under heavy load  
+- High logical reads  
+- Increased CPU usage during aggregation  
+- Longer execution time under heavy load  
 
 ---
-## 4. Copilot Optimisation Recommendations
+## Copilot Optimisation Recommendations
 
-### A. Indexing Strategy
+### Indexing Strategy
 
 Copilot recommends adding the following indexes:
 
-#### 1. Index on Product Category
+#### Index on Product Category
 
 Improves filtering performance.
 
@@ -70,9 +70,9 @@ CREATE INDEX idx_products_category
 ON Products (Category);
 ```
 
-#### 2. Composite Index on Orders Table
+#### Composite Index on Orders Table
 
-Optimizes join and aggregation.
+Optimises join and aggregation.
 
 ```sql
 CREATE INDEX idx_orders_productid_quantity
@@ -81,12 +81,11 @@ ON Orders (ProductID, Quantity);
 
 **Rationale:**
 
--	`ProductID` supports JOIN performance  
--	Including `Quantity` supports aggregation efficiency  
--	Reduces key lookups  
+- `ProductID` supports JOIN performance  
+- Including `Quantity` supports aggregation efficiency  
+- Reduces key lookups  
 
----
-### B. Query Restructuring
+### Query Restructuring
 
 Copilot suggests filtering earlier and minimising processed rows.
 
@@ -104,16 +103,15 @@ ORDER BY TotalSold DESC;
 
 ### Optimisation Considerations
 
--	Start with filtered `Products` set  
--	Ensure indexes support JOIN and WHERE clause  
--	Reduce intermediate dataset size before aggregation  
+- Start with filtered `Products` set  
+- Ensure indexes support JOIN and WHERE clause  
+- Reduce intermediate dataset size before aggregation  
 
----
-### C. Alternative Aggregation Optimization
+### Alternative Aggregation Optimisation
 
 If dataset is very large, Copilot may suggest:
 
-#### 1. Pre-Aggregation Strategy
+#### Pre-Aggregation Strategy
 
 Aggregate orders first before joining:
 
@@ -132,67 +130,67 @@ ORDER BY o.TotalSold DESC;
 
 **Benefits:**
 
--	Reduces rows before joining  
--	Limits join to aggregated results  
--	Improves scalability for large order volumes  
+- Reduces rows before joining  
+- Limits join to aggregated results  
+- Improves scalability for large order volumes  
 
 ---
-## 5. Execution Plan (After Optimisation)
+## Execution Plan (After Optimisation)
 
 Expected improvements:
 
--	Index seek on `Products.Category`  
--	Index seek on `Orders.ProductID`  
--	Reduced logical reads  
--	Lower CPU cost during aggregation  
--	More efficient sort operation  
+- Index seek on `Products.Category`  
+- Index seek on `Orders.ProductID`  
+- Reduced logical reads  
+- Lower CPU cost during aggregation  
+- More efficient sort operation  
 
 ### Measurable Improvements
 
 Track the following metrics:
 
--	Query execution time  
--	Logical reads (SET STATISTICS IO)  
--	CPU time (SET STATISTICS TIME)  
--	Estimated vs. actual execution plan cost  
--	Wait statistics under load  
+- Query execution time  
+- Logical reads (`SET STATISTICS IO`)  
+- CPU time (`SET STATISTICS TIME`)  
+- Estimated vs. actual execution plan cost  
+- Wait statistics under load  
 
 ---
-## 6. Validation Strategy
+## Validation Strategy
 
 To ensure optimisation success:
 
--	Compare execution plans before and after indexing  
--	Measure execution time under realistic workload  
--	Test with large datasets  
--	Validate correctness of aggregated totals  
--	Monitor performance during peak traffic  
+- Compare execution plans before and after indexing  
+- Measure execution time under realistic workload  
+- Test with large datasets  
+- Validate correctness of aggregated totals  
+- Monitor performance during peak traffic  
 
 ---
-## 7. Role of Copilot in Optimization
+## Role of Copilot in Optimisation
 
 Copilot assists by:
 
--	Detecting missing indexes  
--	Recommending composite indexes  
--	Suggesting query refactoring  
--	Identifying aggregation inefficiencies  
--	Providing index creation syntax  
--	Helping interpret execution plan warnings  
+- Detecting missing indexes  
+- Recommending composite indexes  
+- Suggesting query refactoring  
+- Identifying aggregation inefficiencies  
+- Providing index creation syntax  
+- Helping interpret execution plan warnings  
 
 ---
-## 8. Final Optimization Strategy Summary
+## Final Optimisation Strategy Summary
 
--	Add index on `Products.Category`  
--	Add composite index on `Orders(ProductID, Quantity)`  
--	Ensure join columns are indexed  
--	Consider pre-aggregation for very large datasets  
--	Compare execution plans before and after changes  
--	Continuously monitor query performance  
+- Add index on `Products.Category`  
+- Add composite index on `Orders(ProductID, Quantity)`  
+- Ensure join columns are indexed  
+- Consider pre-aggregation for very large datasets  
+- Compare execution plans before and after changes  
+- Continuously monitor query performance  
 
 ---
 ## Conclusion
 
-By applying indexing, restructuring joins, and optimizing aggregation strategies with Copilot’s assistance, the query becomes more scalable and efficient. These optimizations reduce I/O operations, improve execution speed, and support WarehouseX’s growing order and inventory demands.
+By applying indexing, restructuring joins, and optimising aggregation strategies with Copilot’s assistance, the query becomes more scalable and efficient. These optimisations reduce I/O operations, improve execution speed, and support WarehouseX’s growing order and inventory demands.
 
 ---

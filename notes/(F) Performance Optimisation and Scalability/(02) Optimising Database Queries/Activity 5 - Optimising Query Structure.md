@@ -5,8 +5,6 @@
 - Refactor queries to reduce resource usage and improve execution speed
 - Explain how optimisation techniques improve overall database performance
 
-
----
 ---
 ## Example 1: Optimising a Customer Orders Query
 
@@ -22,7 +20,6 @@ Original Query:
 SELECT * FROM orders;
 ```
 
----
 ### Step 1: Identifying Performance Issues
 
 - Selecting all columns
@@ -36,7 +33,6 @@ SELECT * FROM orders;
 - Poor scalability
     - Additional sorting or conditions increase processing overhead
 
----
 ### Step 2: Applying Best Practices
 
 - Select only necessary columns
@@ -50,7 +46,6 @@ SELECT * FROM orders;
 - Index frequently searched columns
     - Speeds up filtering and sorting operations
 
----
 ### Step 3: Refactored Query
 
 ```sql
@@ -58,7 +53,6 @@ SELECT order_id, order_date, total_price FROM orders
 	WHERE order_date >= '2023-01-01';
 ```
 
----
 ### Step 4: Why This Refactored Query Is Better
 
 - Retrieves only required columns, reducing unnecessary data transfer
@@ -66,8 +60,6 @@ SELECT order_id, order_date, total_price FROM orders
 - Can leverage an index on order_date for faster filtering
 - Improves performance and scalability for frequent execution
 
-
----
 ---
 ## Example 2: Optimising a Product Search Query
 
@@ -83,7 +75,6 @@ Original Query:
 SELECT * FROM products;
 ```
 
----
 ### Step 1: Performance Issues
 
 - Selecting all columns
@@ -94,7 +85,6 @@ SELECT * FROM products;
     - Scans the entire table
     - Forces the database to process all rows
 
----
 ### Step 2: Refactored Query
 
 ```sql
@@ -105,7 +95,6 @@ SELECT name, price, stock FROM products
 		price BETWEEN 50 AND 200;
 ```
 
----
 ### Step 3: Explanation of Improvements
 
 - The refactored query limits selected columns, reducing resource usage

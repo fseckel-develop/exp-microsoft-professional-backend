@@ -9,9 +9,9 @@ WarehouseX has reported system instability caused by:
 The goal of this project is to improve **stability, reliability, and resilience** of the order processing system using Microsoft Copilot.
 
 ---
-# Step 1: Review the Scenario & Define Optimization Strategy
+## Step 1: Review the Scenario & Define Optimization Strategy
 
-## Identified Issues
+### Identified Issues
 
 - Missing null validation
 - No stock availability checks
@@ -19,7 +19,7 @@ The goal of this project is to improve **stability, reliability, and resilience*
 - No structured error handling
 - Edge cases not considered
 
-## Optimization Strategy
+### Optimisation Strategy
 
 - Implement thorough null checks for all critical objects and inputs  
 - Validate stock levels before processing orders  
@@ -28,9 +28,9 @@ The goal of this project is to improve **stability, reliability, and resilience*
 - Handle edge cases (e.g., invalid quantity, missing product, insufficient stock)  
 
 ---
-# Step 2: Debug the Provided Non-Resilient Code
+## Step 2: Debug the Provided Non-Resilient Code
 
-## Original Non-Resilient Function
+### Original Non-Resilient Function
 
 ```csharp
 public void ProcessOrder(Order order)
@@ -41,39 +41,38 @@ public void ProcessOrder(Order order)
 }
 ```
 
-## Problems Identified by Copilot
+### Problems Identified by Copilot
 
-### A. Possible Null Reference Exceptions
+#### Possible Null Reference Exceptions
 
 - `order` could be null  
 - `product` could be null  
 - `db` context might not return a valid product  
 
-### B. No Stock Validation
+#### No Stock Validation
 
 - Could reduce stock below zero  
 - No check for sufficient inventory  
 
-### C. No Exception Handling
+#### No Exception Handling
 
 - Unhandled errors crash application  
 - Uses no structured error management  
 
-### D. Edge Cases Not Handled
+#### Edge Cases Not Handled
 
 - `order.Quantity <= 0`  
 - Invalid product ID  
 - Simultaneous updates (concurrency concerns)
 
 ---
-# Step 3: Apply Copilot’s Debugging Suggestions
+## Step 3: Apply Copilot’s Debugging Suggestions
 
-## Copilot Prompt Example
+### Copilot Prompt Example
 
 > "How can I make this order processing method safer and prevent null reference errors and stock issues?"
 
----
-## Improved & Resilient Version of ProcessOrder
+### Improved & Resilient Version of ProcessOrder
 
 ```csharp
 public void ProcessOrder(Order order)
@@ -113,27 +112,27 @@ public void ProcessOrder(Order order)
 ```
 
 ---
-# Improvements Explained
+## Improvements Explained
 
-## 1. Null Checks and Validation
+### Null Checks and Validation
 
 - Prevents `NullReferenceException`
 - Ensures required objects exist before use
 - Improves defensive programming practices
 
-## 2. Stock Availability Validation
+### Stock Availability Validation
 
 - Prevents negative inventory
 - Protects data integrity
 - Ensures business rules are enforced
 
-## 3. Structured Exception Handling
+### Structured Exception Handling
 
 - Prevents full application crashes
 - Catches unexpected runtime errors
 - Enables logging and monitoring integration
 
-## 4. Edge Case Handling
+### Edge Case Handling
 
 Now covers:
 
@@ -145,7 +144,7 @@ Now covers:
 This increases system resilience and reliability.
 
 ---
-# Optional Further Improvements (Advanced)
+## Optional Further Improvements (Advanced)
 
 Copilot may also suggest:
 
@@ -166,7 +165,7 @@ if (product.Stock < order.Quantity)
 ```
 
 ---
-# Summary of Stability Enhancements
+## Summary of Stability Enhancements
 
 | Issue | Original Code | Improved Version |
 |-------|--------------|------------------|
@@ -177,7 +176,7 @@ if (product.Stock < order.Quantity)
 | System Stability | Low | Significantly improved |
 
 ---
-# Final Outcome
+## Final Outcome
 
 By applying Copilot’s debugging assistance:
 

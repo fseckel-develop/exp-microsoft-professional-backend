@@ -1,0 +1,87 @@
+@BaseAddress = http://localhost:5172
+@ProductId = 44e715a4-5f87-4bc1-8022-18a3bda7209f
+
+
+##########
+# Demo Cache Controller Routes
+##########
+
+### Store Data in In-Memory Cache
+POST {{BaseAddress}}/api/demo-cache/store
+Accept: application/json
+
+
+### Get Data from In-Memory Cache
+GET {{BaseAddress}}/api/demo-cache/retrieve
+Accept: application/json
+
+
+### Remove Data from In-Memory Cache
+DELETE {{BaseAddress}}/api/demo-cache/remove
+Accept: application/json
+
+
+### Monitor In-Memory Cache
+GET {{BaseAddress}}/api/demo-cache/monitor
+Accept: application/json
+
+
+##########
+# Product Cache Demo Routes
+##########
+
+### 1) Seed data / get valid product ids
+# Copy one of the returned ids into @ProductId above
+GET {{BaseAddress}}/api/products/seed
+Accept: application/json
+
+
+### 2) First product request (expect CACHE MISS)
+GET {{BaseAddress}}/api/products/{{ProductId}}
+Accept: application/json
+
+
+### 3) Second product request (expect CACHE HIT)
+GET {{BaseAddress}}/api/products/{{ProductId}}
+Accept: application/json
+
+
+### 4) First featured list request (expect CACHE MISS)
+GET {{BaseAddress}}/api/products/featured
+Accept: application/json
+
+
+### 5) Second featured list request (expect CACHE HIT)
+GET {{BaseAddress}}/api/products/featured
+Accept: application/json
+
+
+### 6) Invalidate one product cache
+# Service also removes the featured cache here
+DELETE {{BaseAddress}}/api/products/{{ProductId}}/cache
+Accept: application/json
+
+
+### 7) Product request after invalidation (expect CACHE MISS again)
+GET {{BaseAddress}}/api/products/{{ProductId}}
+Accept: application/json
+
+
+### 8) Featured list after invalidation (expect CACHE MISS again)
+GET {{BaseAddress}}/api/products/featured
+Accept: application/json
+
+
+### 9) Featured list again (expect CACHE HIT)
+GET {{BaseAddress}}/api/products/featured
+Accept: application/json
+
+
+### 10) Explicitly invalidate featured cache only
+DELETE {{BaseAddress}}/api/products/featured/cache
+Accept: application/json
+
+
+### 11) Featured list after explicit invalidation (expect CACHE MISS)
+GET {{BaseAddress}}/api/products/featured
+Accept: application/json

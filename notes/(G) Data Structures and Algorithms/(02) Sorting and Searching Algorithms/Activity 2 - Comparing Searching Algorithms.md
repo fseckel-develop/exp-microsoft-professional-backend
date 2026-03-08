@@ -8,7 +8,7 @@
 ---
 ## Core Algorithm Characteristics
 
-- Linear Search  
+- **Linear Search**:
 	- Sequentially checks each element  
 	- Works on sorted and unsorted datasets  
 	- No preprocessing required  
@@ -23,7 +23,7 @@
 	- Limitations  
 		- Inefficient for large datasets  
 
-- Binary Search  
+- **Binary Search**:
 	- Repeatedly divides sorted dataset in half  
 	- Requires data to be sorted  
 	- Uses left, right, and midpoint tracking  
@@ -38,14 +38,14 @@
 		- Cannot operate on unsorted data  
 		- Sorting may add O(n log n) preprocessing cost  
 
-- Key Decision Factors  
+- **Key Decision Factors**:
 	- Is the dataset sorted?  
 	- How large is the dataset?  
 	- Does the dataset change frequently?  
 	- Is preprocessing (sorting) acceptable?  
 
 ---
-## Scenario 1 – Unsorted Product Catalog (50 Items)
+## Scenario 1: Unsorted Product Catalog (50 Items)
 
 - Dataset Characteristics  
 	- Small size  
@@ -69,7 +69,7 @@
 	- Simplicity outweighs theoretical speed advantage  
 
 ---
-## Scenario 2 – Customer ID in Sorted Database (500,000 Records)
+## Scenario 2: Customer ID in Sorted Database (500,000 Records)
 
 - Dataset Characteristics  
 	- Very large dataset  
@@ -93,7 +93,7 @@
 	- Scales efficiently with database growth  
 
 ---
-## Scenario 3 – Frequently Changing Playlist
+## Scenario 3: Frequently Changing Playlist
 
 - Dataset Characteristics  
 	- Dynamically updated  
@@ -117,7 +117,7 @@
 	- Maintains system efficiency  
 
 ---
-## Scenario 4 – Help Desk Ticket System
+## Scenario 4: Help Desk Ticket System
 
 - Dataset Characteristics  
 	- Tickets stored in order received  
@@ -141,7 +141,7 @@
 	- Linear search supports frequent updates  
 
 ---
-## Scenario 5 – Username Lookup in Sorted List (1,000,000 Users)
+## Scenario 5: Username Lookup in Sorted List (1,000,000 Users)
 
 - Dataset Characteristics  
 	- Very large dataset  

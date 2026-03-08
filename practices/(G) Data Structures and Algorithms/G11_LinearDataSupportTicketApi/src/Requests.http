@@ -1,0 +1,105 @@
+@BaseAddress = http://localhost:5782
+@TicketId = da9d10b1-e670-4940-88c2-9a698d2e16fe
+
+
+####################
+# System
+####################
+
+### Root
+GET {{BaseAddress}}/
+
+### Health
+GET {{BaseAddress}}/health
+
+
+####################
+# Array: support lanes
+####################
+
+### Get support lanes
+GET {{BaseAddress}}/api/lanes
+
+
+####################
+# Tickets
+####################
+
+### Create ticket 1
+POST {{BaseAddress}}/api/tickets
+Content-Type: application/json
+
+{
+  "customerName": "Alice",
+  "subject": "Cannot reset my password",
+  "supportLane": "Account Access"
+}
+
+### Create ticket 2
+POST {{BaseAddress}}/api/tickets
+Content-Type: application/json
+
+{
+  "customerName": "Bob",
+  "subject": "Invoice amount looks incorrect",
+  "supportLane": "Billing"
+}
+
+### Create ticket 3
+POST {{BaseAddress}}/api/tickets
+Content-Type: application/json
+
+{
+  "customerName": "Carla",
+  "subject": "App crashes on startup",
+  "supportLane": "Technical Support"
+}
+
+### Get all tickets
+GET {{BaseAddress}}/api/tickets
+
+### Get one ticket
+GET {{BaseAddress}}/api/tickets/{{TicketId}}
+
+
+####################
+# Queue: pending tickets
+####################
+
+### Get pending tickets
+GET {{BaseAddress}}/api/tickets/pending
+
+### Process next pending ticket
+POST {{BaseAddress}}/api/tickets/process-next
+
+
+####################
+# Stack: undo status changes
+####################
+
+### Change ticket status to WaitingForCustomer
+POST {{BaseAddress}}/api/tickets/{{TicketId}}/status
+Content-Type: application/json
+
+{
+  "newStatus": "WaitingForCustomer"
+}
+
+### Change ticket status to Resolved
+POST {{BaseAddress}}/api/tickets/{{TicketId}}/status
+Content-Type: application/json
+
+{
+  "newStatus": "Resolved"
+}
+
+### Undo last action
+POST {{BaseAddress}}/api/tickets/undo-last-action
+
+
+####################
+# LinkedList: ticket timeline
+####################
+
+### Get ticket timeline
+GET {{BaseAddress}}/api/tickets/{{TicketId}}/timeline

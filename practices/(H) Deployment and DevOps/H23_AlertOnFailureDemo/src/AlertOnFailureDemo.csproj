@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <RootNamespace>AlertOnFailureDemo</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

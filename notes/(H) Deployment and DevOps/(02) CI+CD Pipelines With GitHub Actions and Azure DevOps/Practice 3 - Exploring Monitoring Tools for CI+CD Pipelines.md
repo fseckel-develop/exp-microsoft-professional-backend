@@ -1,58 +1,58 @@
 ## Overview  
 
--	Explore built-in monitoring features in GitHub Actions and Azure DevOps  
--	Analyze dashboards, logs, and run summaries  
--	Simulate alert configurations for pipeline failures  
--	Compare monitoring capabilities of both platforms  
--	Reflect on suitability for production environments  
+- Explore built-in monitoring features in GitHub Actions and Azure DevOps  
+- Analyse dashboards, logs, and run summaries  
+- Simulate alert configurations for pipeline failures  
+- Compare monitoring capabilities of both platforms  
+- Reflect on suitability for production environments  
 
 ---
 ## 1. Exploring Monitoring Dashboards  
 
 ### GitHub Actions  
 
--	Navigate to repository → **Actions** tab  
--	View list of recent workflow runs  
-	-	Status indicators (✅ success / ❌ failure)  
-	-	Branch and commit reference  
-	-	Execution duration  
--	Open a workflow run to inspect:  
-	-	Job breakdown  
-	-	Step-by-step logs  
-	-	Error messages with stack traces  
--	Strengths observed:  
-	-	Clean, minimal UI  
-	-	Easy navigation between jobs and steps  
-	-	Fast identification of failing step  
+- Navigate to repository → **Actions** tab  
+- View list of recent workflow runs  
+	- Status indicators (✅ success / ❌ failure)  
+	- Branch and commit reference  
+	- Execution duration  
+- Open a workflow run to inspect:  
+	- Job breakdown  
+	- Step-by-step logs  
+	- Error messages with stack traces  
+- Strengths observed:  
+	- Clean, minimal UI  
+	- Easy navigation between jobs and steps  
+	- Fast identification of failing step  
 
 ### Azure DevOps  
 
--	Go to project → **Pipelines** → **Runs**  
--	View recent pipeline executions  
-	-	Status indicators (✅ success / ❌ failure)   
-	-	Trigger source  
-	-	Duration  
--	Open a run → **Summary tab**  
-	-	Stage view (Build / Deploy separation)  
-	-	Test results overview  
-	-	Artifacts  
-	-	Linked work items (if configured)  
--	Access detailed logs per job  
--	Strengths observed:  
-	-	Clear stage visualization  
-	-	Built-in test reporting  
-	-	Stronger enterprise-level overview  
+- Go to project → **Pipelines** → **Runs**  
+- View recent pipeline executions  
+	- Status indicators (✅ success / ❌ failure)   
+	- Trigger source  
+	- Duration  
+- Open a run → **Summary tab**  
+	- Stage view (Build / Deploy separation)  
+	- Test results overview  
+	- Artefacts  
+	- Linked work items (if configured)  
+- Access detailed logs per job  
+- Strengths observed:  
+	- Clear stage visualisation  
+	- Built-in test reporting  
+	- Stronger enterprise-level overview  
 
 ---
 ## 2. Simulating a Simple Alert System  
 
 ### GitHub Actions – Alert Configuration  
 
--	GitHub does not provide advanced built-in failure subscriptions like Azure DevOps  
--	Alerts can be implemented via workflow steps  
--	Common approach:  
-	-	Use conditional execution (`if: failure()`)  
-	-	Send notification via Slack, Discord, or Email
+- GitHub does not provide advanced built-in failure subscriptions like Azure DevOps  
+- Alerts can be implemented via workflow steps  
+- Common approach:  
+	- Use conditional execution (`if: failure()`)  
+	- Send notification via Slack, Discord, or Email
 
 #### Example YAML Snippet (GitHub Actions)
 

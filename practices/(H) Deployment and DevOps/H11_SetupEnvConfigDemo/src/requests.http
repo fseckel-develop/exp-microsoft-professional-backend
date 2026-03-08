@@ -1,3 +1,15 @@
-@SetupEnvConfigDemo_HostAddress = http://localhost:5263
+@BaseAddress = http://localhost:5263
 
-###
+
+### Read merged configuration
+GET {{BaseAddress}}/
+
+### Explain config scenarios
+GET {{BaseAddress}}/config-scenarios
+
+### Protected endpoint without API key
+GET {{BaseAddress}}/protected
+
+### Protected endpoint with API key from .env
+GET {{BaseAddress}}/protected
+X-Api-Key: SuperSecret123

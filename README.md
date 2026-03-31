@@ -3,12 +3,12 @@
 ![Microsoft Certification](https://img.shields.io/badge/Microsoft-Back--End%20Developer%20Certificate-0078D4)
 ![C#](https://img.shields.io/badge/Language-C%23-512BD4)
 ![ASP.NET Core](https://img.shields.io/badge/Framework-ASP.NET%20Core-512BD4)
-![EF Core](https://img.shields.io/badge/ORM-EF%20Core-6DB33F)
+![EF Core](https://img.shields.io/badge/ORM-EF%20Core-512BD4)
 ![OpenAPI](https://img.shields.io/badge/API%20Docs-OpenAPI%20%2F%20Swagger-6BA539)  
 ![Database](https://img.shields.io/badge/Database-SQL%20Server%20%7C%20SQLite-F29111)
-![Authentication](https://img.shields.io/badge/Security-JWT%20%2B%20RBAC-B22222)
 ![Redis](https://img.shields.io/badge/Cache-Redis-DC382D)
-![Testing](https://img.shields.io/badge/Testing-xUnit%20%7C%20Moq-9CA3AF)
+![Authentication](https://img.shields.io/badge/Security-JWT%20%2B%20RBAC-B22222)
+![Testing](https://img.shields.io/badge/Testing-xUnit%20%7C%20Moq-green)
 ![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions%20%2B%20Azure%20DevOps-0078D4)
 
 This repository consolidates applied backend engineering work completed throughout the [**Back-End Developer Professional Certificate**](https://www.coursera.org/professional-certificates/microsoft-back-end-developer) program delivered by Microsoft on Coursera. The focus extends beyond coursework — integrating layered API design, authentication systems, data access optimisation, and CI/CD workflows into a cohesive, production-style backend system.  
